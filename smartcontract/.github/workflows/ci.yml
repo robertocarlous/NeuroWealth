@@ -1,0 +1,386 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop", "feat/**"]
+  pull_request:
+    branches: ["main", "develop"]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * 0"
+
+env:
+  # Maximum allowed size in bytes for the optimised contract WASM.
+  # Raise this in the same PR as any deliberate feature addition that grows
+  # the binary, and document the reason in the PR description.
+  WASM_SIZE_LIMIT_BYTES: 1500000
+
+jobs:
+  ci-matrix:
+    name: CI Matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "Format Check"
+            step: "fmt"
+            working_directory: "neurowealth-vault"
+          - name: "Clippy Lint"
+            step: "clippy"
+            working_directory: "neurowealth-vault"
+          - name: "Tests"
+            step: "test"
+            working_directory: "neurowealth-vault"
+          - name: "Documentation Check"
+            step: "doc"
+            working_directory: "neurowealth-vault"
+          - name: "Build WASM"
+            step: "build-wasm"
+            working_directory: "neurowealth-vault"
+          - name: "No Bare Panic Check"
+            step: "no-bare-panic"
+            working_directory: "."
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Read Stellar CLI version
+        id: cli-version
+        run: |
+          VERSION=$(cat .stellar-version | tr -d '[:space:]')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Install Rust toolchain with components
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+          targets: wasm32-unknown-unknown
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: neurowealth-vault
+
+      - name: Cache cargo registry and tooling
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.local/bin/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Install Stellar CLI
+        if: matrix.step == 'build-wasm'
+        run: |
+          VERSION="${{ steps.cli-version.outputs.version }}"
+          mkdir -p "$HOME/.local/bin"
+          curl -sSL "https://github.com/stellar/stellar-cli/releases/download/v${VERSION}/stellar-cli-${VERSION}-x86_64-unknown-linux-gnu.tar.gz" | tar -xz
+          mv stellar "$HOME/.local/bin/stellar"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          stellar --version
+
+      - name: Install wasm-opt
+        if: matrix.step == 'build-wasm'
+        run: cargo install wasm-opt --locked
+
+      - name: Run ${{ matrix.name }}
+        working-directory: ${{ matrix.working_directory }}
+        shell: bash
+        env:
+          CARGO_TARGET_DIR: ${{ runner.temp }}/neurowealth-target
+        run: |
+          set -euo pipefail
+          case "${{ matrix.step }}" in
+            fmt)
+              cargo fmt --all -- --check
+              ;;
+            clippy)
+              cargo clippy --all-targets --all-features -- -D warnings
+              ;;
+            test)
+              cargo test --verbose
+              ;;
+            doc)
+              cargo doc --no-deps
+              ;;
+            build-wasm)
+              RUSTFLAGS="-C target-cpu=mvp" cargo build \
+                -p neurowealth-vault \
+                --target wasm32-unknown-unknown \
+                --release
+
+              WASM_DIR="${CARGO_TARGET_DIR:-target}/wasm32-unknown-unknown/release"
+              WASM_FILE="$WASM_DIR/neurowealth_vault.wasm"
+              wasm-opt --strip-target-features \
+                "$WASM_FILE" \
+                -o "$WASM_FILE"
+
+              WASM_SIZE=$(stat -c%s "$WASM_FILE")
+              LIMIT="${WASM_SIZE_LIMIT_BYTES:-1500000}"
+
+              {
+                echo "## WASM Size Report"
+                echo ""
+                echo "| Metric | Value |"
+                echo "|--------|-------|"
+                echo "| Optimised size | ${WASM_SIZE} bytes |"
+                echo "| Limit          | ${LIMIT} bytes |"
+              } >> "$GITHUB_STEP_SUMMARY"
+
+              if [ "$WASM_SIZE" -gt "$LIMIT" ]; then
+                echo "| Status | :x: EXCEEDED |" >> "$GITHUB_STEP_SUMMARY"
+                echo "::error::Optimised WASM is ${WASM_SIZE} bytes, which exceeds the ${LIMIT}-byte limit. See docs/WASM_SIZE.md for reduction tips."
+                exit 1
+              else
+                echo "| Status | :white_check_mark: OK |" >> "$GITHUB_STEP_SUMMARY"
+                echo "Optimised WASM is ${WASM_SIZE} bytes — within the ${LIMIT}-byte limit."
+              fi
+
+              # Export the WASM path for the artifact upload step.
+              echo "WASM_FILE=$WASM_FILE" >> "$GITHUB_ENV"
+              ;;
+            no-bare-panic)
+              bash scripts/check-no-bare-panic.sh \
+                neurowealth-vault/contracts/vault/src
+              ;;
+            *)
+              echo "Unknown step: ${{ matrix.step }}" >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Upload optimised WASM artifact
+        if: matrix.step == 'build-wasm'
+        uses: actions/upload-artifact@v4
+        with:
+          name: neurowealth-vault-wasm
+          path: ${{ env.WASM_FILE }}
+          retention-days: 14
+
+  cargo-deny:
+    name: Dependency Audit (cargo-deny)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run cargo-deny
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check
+          # The vault workspace manifest drives the dependency graph.
+          manifest-path: ./neurowealth-vault/Cargo.toml
+          # Policy lives in deny.toml at the repo root.
+          command-arguments: "--config deny.toml"
+          # Respect the [graph] settings in deny.toml instead of forcing
+          # --all-features (the action's default).
+          arguments: ""
+
+  readme-check:
+    name: README Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate README
+        run: bash scripts/check-readme.sh .
+
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      contract: ${{ steps.filter.outputs.contract }}
+      vault_src: ${{ steps.filter.outputs.vault_src }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Check for contract changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            contract:
+              - 'neurowealth-vault/**'
+            vault_src:
+              - 'neurowealth-vault/contracts/vault/src/**'
+
+  fuzz-deposit-withdraw:
+    name: Fuzz deposit/withdraw
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [changes]
+    if: |
+      github.event_name == 'schedule' ||
+      (github.event_name == 'pull_request' && needs.changes.outputs.vault_src == 'true')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust nightly
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: neurowealth-vault
+
+      - name: Install cargo-fuzz
+        run: cargo install cargo-fuzz --locked
+
+      - name: Run deposit/withdraw fuzz target (PR – short bounds)
+        if: github.event_name == 'pull_request'
+        working-directory: neurowealth-vault
+        run: cargo fuzz run deposit_withdraw_sequence -- -runs=1000 -max_total_time=120
+
+      - name: Run deposit/withdraw fuzz target (scheduled – full bounds)
+        if: github.event_name == 'schedule'
+        working-directory: neurowealth-vault
+        run: cargo fuzz run deposit_withdraw_sequence -- -runs=5000 -max_total_time=300
+
+  e2e-devnet:
+    name: E2E Devnet Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [ci-matrix, changes]
+    # Trigger e2e-devnet on manual dispatch, weekly schedule, or PRs with 'run-e2e' label or contract modifications
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule' ||
+      (github.event_name == 'pull_request' && (
+        contains(github.event.pull_request.labels.*.name, 'run-e2e') ||
+        needs.changes.outputs.contract == 'true'
+      ))
+
+    # Required secrets:
+    # - SOROBAN_SECRET_KEY: Funded Stellar account secret key used by E2E script
+    #                       to deploy and interact with the contracts on testnet.
+    env:
+      SOROBAN_RPC_URL: https://soroban-testnet.stellar.org
+      SOROBAN_NETWORK_PASSPHRASE: "Test SDF Network ; September 2015"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read Stellar CLI version
+        id: cli-version
+        run: |
+          VERSION=$(cat .stellar-version | tr -d '[:space:]')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: neurowealth-vault
+
+      - name: Install Stellar CLI
+        run: |
+          VERSION="${{ steps.cli-version.outputs.version }}"
+          if [[ -x "$HOME/.local/bin/stellar" ]]; then
+            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+            stellar --version
+            exit 0
+          fi
+
+          mkdir -p "$HOME/.local/bin"
+          curl -sSL "https://github.com/stellar/stellar-cli/releases/download/v${VERSION}/stellar-cli-${VERSION}-x86_64-unknown-linux-gnu.tar.gz" | tar -xz
+          mv stellar "$HOME/.local/bin/stellar"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          stellar --version
+
+      - name: Install wasm-opt
+        run: cargo install wasm-opt --locked
+
+      - name: Build contract WASM (MVP-compatible)
+        working-directory: neurowealth-vault
+        env:
+          CARGO_TARGET_DIR: ${{ runner.temp }}/neurowealth-target
+        run: |
+          RUSTFLAGS="-C target-cpu=mvp" cargo build \
+            -p neurowealth-vault \
+            --target wasm32-unknown-unknown \
+            --release
+
+          WASM_DIR="${CARGO_TARGET_DIR:-target}/wasm32-unknown-unknown/release"
+          WASM_FILE="$WASM_DIR/neurowealth_vault.wasm"
+          wasm-opt --strip-target-features \
+            "$WASM_FILE" \
+            -o "$WASM_FILE"
+
+      - name: Make scripts executable
+        run: chmod +x scripts/e2e-devnet.sh scripts/e2e-restore.sh
+
+      - name: Run E2E devnet validation
+        id: e2e
+        run: |
+          echo "::group::E2E Output"
+          ./scripts/e2e-devnet.sh 2>&1 | tee scripts/e2e-artifacts/full_output.log
+          echo "::endgroup::"
+
+      - name: Upload E2E artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-devnet-artifacts
+          path: scripts/e2e-artifacts/
+          retention-days: 14
+
+      - name: Cleanup testnet state
+        if: always()
+        run: ./scripts/e2e-restore.sh --keep-artifacts
+
+      - name: Report failure details
+        if: failure()
+        run: |
+          echo "## E2E Devnet Validation Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ -f scripts/e2e-artifacts/summary.txt ]]; then
+            echo "### Scenario Results" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat scripts/e2e-artifacts/summary.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ -f scripts/e2e-artifacts/contract_id.txt ]]; then
+            CID=$(cat scripts/e2e-artifacts/contract_id.txt)
+            echo "### References" >> $GITHUB_STEP_SUMMARY
+            echo "- **Contract ID:** \`$CID\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Explorer:** [View on StellarExpert](https://stellar.expert/explorer/testnet/contract/$CID)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the uploaded **e2e-devnet-artifacts** for full logs and transaction details." >> $GITHUB_STEP_SUMMARY
+
+      - name: Report success details
+        if: success()
+        run: |
+          echo "## E2E Devnet Validation Passed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ -f scripts/e2e-artifacts/summary.txt ]]; then
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat scripts/e2e-artifacts/summary.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [[ -f scripts/e2e-artifacts/contract_id.txt ]]; then
+            CID=$(cat scripts/e2e-artifacts/contract_id.txt)
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Contract ID:** \`$CID\`" >> $GITHUB_STEP_SUMMARY
+          fi
