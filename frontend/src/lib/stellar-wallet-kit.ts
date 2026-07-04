@@ -61,3 +61,24 @@ export const signTransaction = async ({
 
   return signedTxXdr;
 };
+
+interface signMessageProps {
+  message: string;
+  address: string;
+}
+
+/**
+ * Signs an arbitrary message (not a transaction) for the backend's
+ * challenge/verify wallet login flow — the backend verifies this signature
+ * with `Keypair.verify(Buffer.from(message, "utf8"), signatureBase64)`.
+ */
+export const signMessage = async ({
+  message,
+  address,
+}: signMessageProps): Promise<string> => {
+  const { signedMessage } = await getKit().signMessage(message, {
+    address,
+  });
+
+  return signedMessage;
+};

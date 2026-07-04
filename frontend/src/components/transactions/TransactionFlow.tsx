@@ -27,7 +27,16 @@ import {
 } from "@/lib/transactions";
 import { ApiRequestError, apiRequest } from "@/lib/api-client";
 import { useSandbox } from "@/contexts/SandboxContext";
+import { useWallet } from "@/contexts/WalletProvider";
+import { ensureBackendSession, backendUrl } from "@/lib/backend-auth";
+import { signTransaction } from "@/lib/stellar-wallet-kit";
+import { submitSignedXdr } from "@/lib/soroban-submit";
 import { TransactionErrorRecovery } from "./TransactionErrorRecovery";
+
+/** True when a real backend is configured for non-custodial on-chain deposits. */
+function isRealChainFlowConfigured(): boolean {
+  return Boolean(process.env.NEXT_PUBLIC_BACKEND_URL);
+}
 
 type ThemeMode = "light" | "dark";
 
@@ -97,6 +106,7 @@ export function TransactionFlow() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { getCurrentScenario, isSandboxMode } = useSandbox();
+  const { publicKey, connected: walletConnected } = useWallet();
   const timeoutRef = useRef<number | null>(null);
   const requestControllerRef = useRef<AbortController | null>(null);
 
@@ -355,6 +365,72 @@ export function TransactionFlow() {
     await submitReview();
   }
 
+  async function handleRealDepositConfirm() {
+    if (!quote || !publicKey) {
+      return;
+    }
+
+    const pendingTx: PendingTransaction = {
+      kind: "deposit",
+      reference: quote.reference,
+      quote,
+      statusLabel: "Awaiting network confirmation",
+      message: "Your signed deposit is being confirmed on Stellar testnet.",
+      completionDelayMs: 0,
+      nextStatus: "success",
+      failureReason: null,
+    };
+
+    setPending(pendingTx);
+    setStage("pending");
+    setLastErrorReference(pendingTx.reference);
+    setLastFailedAction(null);
+
+    try {
+      const token = await ensureBackendSession(publicKey);
+      const buildRes = await fetch(`${backendUrl()}/vault/build-transaction`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          type: "deposit",
+          amount: Number(formValues.amount),
+          assetSymbol: "USDC",
+        }),
+      });
+      if (!buildRes.ok) {
+        throw new Error(`Failed to build deposit transaction: ${buildRes.status}`);
+      }
+      const { xdr } = await buildRes.json();
+
+      const signedXdr = await signTransaction({
+        unsignedTransaction: xdr,
+        address: publicKey,
+      });
+
+      const result = await submitSignedXdr(signedXdr);
+
+      const nextReceipt = buildTransactionReceipt(
+        pendingTx,
+        result.status === "SUCCESS" ? "success" : "failure",
+      );
+      setReceipt(nextReceipt);
+      setStage(nextReceipt.status);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      const failedReceipt = buildTransactionReceipt(
+        { ...pendingTx, failureReason: message },
+        "failure",
+      );
+      setReceipt(failedReceipt);
+      setStage("failure");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   async function handleConfirm() {
     if (preview !== "interactive") {
       return;
@@ -364,6 +440,11 @@ export function TransactionFlow() {
     setRequestMessage(null);
     setRecovery(null);
     setLastFailedAction(null);
+
+    if (kind === "deposit" && walletConnected && publicKey && isRealChainFlowConfigured()) {
+      await handleRealDepositConfirm();
+      return;
+    }
 
     const controller = beginApiRequest();
 
