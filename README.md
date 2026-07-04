@@ -195,6 +195,19 @@ issues for security reports:
 - **Smart contracts**: Stellar testnet for staging, mainnet for production (see
   [`smartcontract/docs/MAINNET_CHECKLIST.md`](smartcontract/docs/MAINNET_CHECKLIST.md))
 
+### Current testnet deployment
+
+| | |
+|---|---|
+| Vault contract | [`CC2A56NEH35Z2VJ5TALSULYUICPCJXU3KLBHOTMU3OSRSOCCDJN5A42O`](https://stellar.expert/explorer/testnet/contract/CC2A56NEH35Z2VJ5TALSULYUICPCJXU3KLBHOTMU3OSRSOCCDJN5A42O) |
+| USDC token (Blend testnet) | `CAQCFVLOBK5GIULPNZRGATJJMIZL5BSP7X5YJVMGCPTUEPFM4AVSRCJU` |
+| Blend pool (`TestnetV2`) | `CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF` |
+| Network | Stellar testnet (`https://soroban-testnet.stellar.org`) |
+
+Get testnet USDC for this deployment from the Blend faucet at
+[testnet.blend.capital](https://testnet.blend.capital/) — connect a Friendbot-funded wallet
+and sign the claim to receive 1,000 USDC.
+
 ## Roadmap
 
 - **Phase 1 — Foundation** (current): Soroban vault contract, basic AI agent with Blend
