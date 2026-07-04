@@ -1,0 +1,69 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - dev
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Validate environment variables
+        run: yarn validate:env
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_APP_ENV: staging
+          NEXT_PUBLIC_APP_URL: ${{ secrets.STAGING_APP_URL }}
+          WHATSAPP_APP_SECRET: ${{ secrets.STAGING_WHATSAPP_APP_SECRET }}
+          WHATSAPP_VERIFY_TOKEN: ${{ secrets.STAGING_WHATSAPP_VERIFY_TOKEN }}
+          WHATSAPP_ACCESS_TOKEN: ${{ secrets.STAGING_WHATSAPP_ACCESS_TOKEN }}
+          WHATSAPP_PHONE_NUMBER_ID: ${{ secrets.STAGING_WHATSAPP_PHONE_NUMBER_ID }}
+          WHATSAPP_WABA_ID: ${{ secrets.STAGING_WHATSAPP_WABA_ID }}
+          DB_HOST: ${{ secrets.STAGING_DB_HOST }}
+          DB_PORT: ${{ secrets.STAGING_DB_PORT }}
+          DB_NAME: ${{ secrets.STAGING_DB_NAME }}
+          DB_USER: ${{ secrets.STAGING_DB_USER }}
+          DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+          STELLAR_NETWORK: testnet
+          STELLAR_HORIZON_URL: https://horizon-testnet.stellar.org
+          WALLET_ENCRYPTION_KEY: ${{ secrets.STAGING_WALLET_ENCRYPTION_KEY }}
+
+      - name: Typecheck
+        run: yarn typecheck
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Build
+        run: yarn build
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_APP_ENV: staging
+          NEXT_PUBLIC_APP_URL: ${{ secrets.STAGING_APP_URL }}
+          STELLAR_NETWORK: testnet
+          STELLAR_HORIZON_URL: https://horizon-testnet.stellar.org
+
+      - name: Deploy to Vercel (Staging)
+        run: npx vercel --token=${{ secrets.VERCEL_TOKEN }} --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
