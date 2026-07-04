@@ -27,6 +27,8 @@ Set these in `.env.local`:
 | `NEXT_PUBLIC_STELLAR_NETWORK` | Optional | Network name — `testnet` or `mainnet` (default: `testnet`) |
 | `NEXT_PUBLIC_STELLAR_HORIZON_URL` | Optional | Stellar Horizon endpoint (overrides the SDK default) |
 | `NEXT_PUBLIC_DEMO_SEED` | Optional | String seed for deterministic mock data in demos and visual baselines. Any non-empty string activates the Mulberry32 seeded PRNG; unset or empty uses `Math.random()`. See `docs/qa/demo-seed.md`. |
+| `NEXT_PUBLIC_BACKEND_URL` | Optional | Express backend origin (e.g. `http://localhost:3001`). When set, the deposit flow talks to it directly for non-custodial wallet login and transaction building instead of the mock `/api/transactions` route. |
+| `NEXT_PUBLIC_SOROBAN_RPC_URL` | Optional | Soroban RPC endpoint used to submit wallet-signed deposit transactions (default: `https://soroban-testnet.stellar.org`). |
 
 Example `.env.local`:
 
@@ -36,6 +38,8 @@ NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_STELLAR_NETWORK=testnet
 NEXT_PUBLIC_STELLAR_HORIZON_URL=https://horizon-testnet.stellar.org
 NEXT_PUBLIC_DEMO_SEED=demo-seed-2026
+NEXT_PUBLIC_BACKEND_URL=http://localhost:3001
+NEXT_PUBLIC_SOROBAN_RPC_URL=https://soroban-testnet.stellar.org
 ```
 
 ### Server-only (Node runtime)
