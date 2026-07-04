@@ -1,0 +1,81 @@
+# Issue #152 — Verify the production artifact builds and the server starts.
+#
+# Builds with dev dependencies, compiles TypeScript, reinstalls production-only
+# dependencies (matching the Docker runtime image), then starts the built server
+# and asserts GET /health returns 200.
+
+name: Production build smoke
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  production-smoke:
+    name: Production build smoke check
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14.4
+        env:
+          POSTGRES_USER: prod_smoke_user
+          POSTGRES_PASSWORD: prod_smoke_pass
+          POSTGRES_DB: prod_smoke_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U prod_smoke_user"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    env:
+      NODE_ENV: test
+      PORT: 3001
+      DATABASE_URL: postgresql://prod_smoke_user:prod_smoke_pass@localhost:5432/prod_smoke_db
+      STELLAR_NETWORK: testnet
+      STELLAR_RPC_URL: https://soroban-testnet.stellar.org
+      STELLAR_AGENT_SECRET_KEY: SXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      VAULT_CONTRACT_ID: CDUMMYVAULTCONTRACTID
+      USDC_TOKEN_ADDRESS: CDUMMYUSDC
+      ANTHROPIC_API_KEY: smoke-anthropic-key
+      JWT_SEED: a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2
+      JWT_SESSION_TTL_HOURS: '24'
+      JWT_NONCE_TTL_MS: '300000'
+      JWT_CLEANUP_INTERVAL_MS: '86400000'
+      WALLET_ENCRYPTION_KEY: a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2
+      TWILIO_AUTH_TOKEN: smoke-twilio-token
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies (build)
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Apply database migrations
+        run: npx prisma migrate deploy
+
+      - name: Build production artifact
+        run: npm run build
+
+      - name: Install production dependencies only
+        run: npm ci --omit=dev
+
+      - name: Regenerate Prisma client for production install
+        run: npx prisma@5.22.0 generate
+
+      - name: Run startup smoke check (/health)
+        run: npm run smoke:health

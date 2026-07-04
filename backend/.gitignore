@@ -1,0 +1,11 @@
+node_modules
+.env
+dist
+logs/
+postgres/
+coverage/
+
+.agents/
+skills-lock.json
+CLAUDE.md
+plan.md
