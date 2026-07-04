@@ -1,0 +1,326 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Network {
+  MAINNET
+  TESTNET
+  FUTURENET
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAWAL
+  YIELD_CLAIM
+  REBALANCE
+  SWAP
+}
+
+enum TransactionStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  CANCELLED
+}
+
+enum PositionStatus {
+  ACTIVE
+  CLOSED
+  LIQUIDATED
+}
+
+enum AgentAction {
+  DEPOSIT
+  WITHDRAW
+  REBALANCE
+  ANALYZE
+  ALERT
+  CLAIM_YIELD
+}
+
+enum AgentStatus {
+  SUCCESS
+  FAILED
+  SKIPPED
+}
+
+enum DeadLetterEventStatus {
+  PENDING
+  RETRIED
+  RESOLVED
+}
+
+model User {
+  id            String   @id @default(uuid())
+  walletAddress String   @unique
+  network       Network  @default(MAINNET)
+  displayName   String?
+  email         String?  @unique
+  avatarUrl     String?
+  riskTolerance Int      @default(5)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions     Session[]
+  positions    Position[]
+  transactions Transaction[]
+  agentLogs    AgentLog[]
+
+  @@map("users")
+}
+
+model Session {
+  id            String   @id @default(uuid())
+  userId        String
+  token         String   @unique
+  walletAddress String
+  network       Network
+  expiresAt     DateTime
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@index([userId, expiresAt])
+  @@map("sessions")
+}
+
+model AdminApiKey {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  role      String
+  scopes    String[]
+  hash      String
+  expiresAt DateTime?
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  lastUsedAt DateTime?
+
+  auditLogs AdminAuditLog[]
+
+  @@index([role])
+  @@index([revokedAt])
+  @@index([expiresAt])
+  @@map("admin_api_keys")
+}
+
+model AdminAuditLog {
+  id         String   @id @default(uuid())
+  adminKeyId String?
+  adminName  String?
+  adminRole  String?
+  action     String
+  target     String?
+  result     String
+  details    Json?
+  ipAddress  String?
+  userAgent  String?
+  method     String?
+  path       String?
+  createdAt  DateTime @default(now())
+
+  adminKey AdminApiKey? @relation(fields: [adminKeyId], references: [id], onDelete: SetNull)
+
+  @@index([adminKeyId])
+  @@index([action])
+  @@index([result])
+  @@index([createdAt])
+  @@map("admin_audit_logs")
+}
+
+model Position {
+  id              String         @id @default(uuid())
+  userId          String
+  protocolName    String
+  assetSymbol     String
+  assetAddress    String?
+  depositedAmount Decimal        @db.Decimal(36, 18)
+  currentValue    Decimal        @db.Decimal(36, 18)
+  yieldEarned     Decimal        @default(0) @db.Decimal(36, 18)
+  status          PositionStatus @default(ACTIVE)
+  openedAt        DateTime       @default(now())
+  closedAt        DateTime?
+  updatedAt       DateTime       @updatedAt
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions   Transaction[]
+  yieldSnapshots YieldSnapshot[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([protocolName])
+  @@index([userId, status])
+  @@index([protocolName, assetSymbol])
+  @@index([assetSymbol])
+  @@map("positions")
+}
+
+model Transaction {
+  id           String            @id @default(uuid())
+  userId       String
+  positionId   String?
+  txHash       String?           @unique
+  type         TransactionType
+  status       TransactionStatus @default(PENDING)
+  assetSymbol  String
+  amount       Decimal           @db.Decimal(36, 18)
+  fee          Decimal?          @db.Decimal(36, 18)
+  network      Network
+  protocolName String?
+  memo         String?
+  confirmedAt  DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  position Position? @relation(fields: [positionId], references: [id])
+
+  @@index([userId])
+  @@index([positionId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@map("transactions")
+}
+
+model YieldSnapshot {
+  id              String   @id @default(uuid())
+  positionId      String
+  apy             Decimal  @db.Decimal(10, 6)
+  yieldAmount     Decimal  @db.Decimal(36, 18)
+  principalAmount Decimal  @db.Decimal(36, 18)
+  snapshotAt      DateTime @default(now())
+
+  position Position @relation(fields: [positionId], references: [id], onDelete: Cascade)
+
+  @@index([positionId])
+  @@index([snapshotAt])
+  @@index([positionId, snapshotAt])
+  @@map("yield_snapshots")
+}
+
+model ProtocolRate {
+  id           String   @id @default(uuid())
+  protocolName String
+  assetSymbol  String
+  supplyApy    Decimal  @db.Decimal(10, 6)
+  borrowApy    Decimal? @db.Decimal(10, 6)
+  tvl          Decimal? @db.Decimal(36, 2)
+  network      Network
+  fetchedAt    DateTime @default(now())
+
+  @@unique([protocolName, assetSymbol, network, fetchedAt])
+  @@index([protocolName, assetSymbol])
+  @@index([fetchedAt])
+  @@index([protocolName, assetSymbol, fetchedAt])
+  @@map("protocol_rates")
+}
+
+model AgentLog {
+  id           String      @id @default(uuid())
+  userId       String?     // null for system-level actions (scans, alerts)
+  positionId   String?     // set when log is tied to a specific position
+  action       AgentAction
+  status       AgentStatus
+  reasoning    String?     @db.Text
+  inputData    Json?
+  outputData   Json?
+  errorMessage String?
+  durationMs   Int?
+  createdAt    DateTime    @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([positionId])
+  @@index([action])
+  @@index([status])
+  @@index([userId, status])
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@map("agent_logs")
+}
+
+model EventCursor {
+  id                   String   @id @default(uuid())
+  contractId           String   @unique
+  lastProcessedLedger  Int
+  lastProcessedAt      DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("event_cursors")
+}
+
+model ProcessedEvent {
+  id           String   @id @default(uuid())
+  contractId   String
+  txHash       String
+  eventType    String
+  ledger       Int
+  processedAt  DateTime @default(now())
+
+  @@unique([contractId, txHash, eventType, ledger])
+  @@index([contractId])
+  @@index([txHash])
+  @@index([ledger])
+  @@index([processedAt])
+  @@map("processed_events")
+}
+
+model DeadLetterEvent {
+  id          String                @id @default(uuid())
+  contractId  String
+  txHash      String
+  eventType   String
+  ledger      Int
+  error       String                @db.Text
+  payload     Json
+  status      DeadLetterEventStatus @default(PENDING)
+  retryCount  Int                   @default(0)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  @@index([status])
+  @@index([contractId])
+  @@index([txHash])
+  @@index([createdAt])
+  @@map("dead_letter_events")
+}
+
+model CustodialWallet {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  publicKey       String   @unique
+  encryptedSecret String
+  iv              String
+  authTag         String
+  keyVersion      Int      @default(1)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([keyVersion])
+  @@map("custodial_wallets")
+}
+
+model AuthNonce {
+  id            String   @id @default(uuid())
+  stellarPubKey String   @unique
+  nonce         String
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+
+  @@index([expiresAt])
+  @@map("auth_nonces")
+}
