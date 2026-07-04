@@ -1,0 +1,38 @@
+[package]
+name = "neurowealth-vault-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+license = "MIT"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+neurowealth-vault = { path = "../contracts/vault" }
+soroban-sdk = { workspace = true, features = ["testutils"] }
+
+[[bin]]
+name = "deposit_withdraw_sequence"
+path = "fuzz_targets/deposit_withdraw_sequence.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "rebalance_transitions"
+path = "fuzz_targets/rebalance_transitions.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "rounding_boundaries"
+path = "fuzz_targets/rounding_boundaries.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "share_accounting_invariants"
+path = "fuzz_targets/share_accounting_invariants.rs"
+test = false
+doc = false
