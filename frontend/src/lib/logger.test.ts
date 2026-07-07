@@ -33,7 +33,8 @@ test("isLogLevelEnabled respects NEXT_PUBLIC_LOG_LEVEL=silent", () => {
 });
 
 test("isLogLevelEnabled defaults to warn minimum in production", () => {
-  process.env.NODE_ENV = "production";
+  // NODE_ENV is typed read-only in recent @types/node; cast to mutate it for this test.
+  (process.env as { NODE_ENV: string }).NODE_ENV = "production";
   delete process.env.NEXT_PUBLIC_LOG_LEVEL;
   assert.equal(isLogLevelEnabled("info"), false);
   assert.equal(isLogLevelEnabled("warn"), true);
