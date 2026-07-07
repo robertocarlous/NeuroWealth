@@ -34,6 +34,17 @@ interface VerifyResponse {
   expiresAt: string;
 }
 
+/** Extracts the backend's `{ error: "..." }` body, falling back to the status code. */
+async function readErrorMessage(res: Response, fallback: string): Promise<string> {
+  try {
+    const body = await res.json();
+    if (typeof body?.error === "string") return body.error;
+  } catch {
+    // response wasn't JSON — fall through to the generic message
+  }
+  return `${fallback}: ${res.status}`;
+}
+
 async function requestChallenge(publicKey: string): Promise<ChallengeResponse> {
   const res = await fetch(`${backendUrl()}/api/auth/challenge`, {
     method: "POST",
@@ -41,7 +52,7 @@ async function requestChallenge(publicKey: string): Promise<ChallengeResponse> {
     body: JSON.stringify({ stellarPubKey: publicKey }),
   });
   if (!res.ok) {
-    throw new Error(`Auth challenge failed: ${res.status}`);
+    throw new Error(await readErrorMessage(res, "Auth challenge failed"));
   }
   return res.json();
 }
@@ -56,7 +67,7 @@ async function verifySignature(
     body: JSON.stringify({ stellarPubKey: publicKey, signature }),
   });
   if (!res.ok) {
-    throw new Error(`Auth verify failed: ${res.status}`);
+    throw new Error(await readErrorMessage(res, "Auth verify failed"));
   }
   return res.json();
 }

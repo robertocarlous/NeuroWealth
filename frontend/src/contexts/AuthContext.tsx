@@ -84,43 +84,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, [syncFromStorage]);
 
-  const signIn = async (email: string, password: string) => {
-    setLoading(true);
-    try {
-      const session = await authAdapter.signIn(email, password);
-      setUser(session.user);
-      setSessionCookie(session);
-      analytics.track("auth_sign_in", { userId: session.user.id });
-    } catch (err) {
-      analytics.track("auth_sign_in_failed");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const signIn = useCallback(
+    async (email: string, password: string) => {
+      setLoading(true);
+      try {
+        const session = await authAdapter.signIn(email, password);
+        setUser(session.user);
+        setSessionCookie(session);
+        analytics.track("auth_sign_in", { userId: session.user.id });
+      } catch (err) {
+        analytics.track("auth_sign_in_failed");
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [authAdapter],
+  );
 
-  const signUp = async (email: string, name: string, password: string) => {
-    setLoading(true);
-    try {
-      const session = await authAdapter.signUp(email, name, password);
-      setUser(session.user);
-      setSessionCookie(session);
-      analytics.track("auth_sign_up", { userId: session.user.id });
-    } catch (err) {
-      analytics.track("auth_sign_up_failed");
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const signUp = useCallback(
+    async (email: string, name: string, password: string) => {
+      setLoading(true);
+      try {
+        const session = await authAdapter.signUp(email, name, password);
+        setUser(session.user);
+        setSessionCookie(session);
+        analytics.track("auth_sign_up", { userId: session.user.id });
+      } catch (err) {
+        analytics.track("auth_sign_up_failed");
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [authAdapter],
+  );
 
   /**
    * Sign in with a connected Stellar wallet: runs the real challenge/sign/verify
    * handshake against the backend (see lib/backend-auth.ts), then persists the
    * resulting session the same way signIn/signUp do so ProtectedRoute and the
    * rest of the app don't need to know the difference.
+   *
+   * Stable via useCallback — callers (e.g. the login page) put this in a
+   * useEffect dependency array, and an unstable reference here would refire
+   * that effect on every render, including mid-request from this function's
+   * own setLoading() calls.
    */
-  const signInWithWallet = async (publicKey: string) => {
+  const signInWithWallet = useCallback(async (publicKey: string) => {
     setLoading(true);
     try {
       const { token, userId, expiresAt } = await loginWithWallet(publicKey);
@@ -142,15 +153,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const signOut = () => {
+  const signOut = useCallback(() => {
     analytics.track("auth_sign_out", { userId: user?.id });
     authAdapter.signOut();
     clearSessionCookie();
     setUser(null);
     router.push(SIGN_IN_PATH);
-  };
+  }, [authAdapter, user?.id, router]);
 
   return (
     <AuthContext.Provider

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts";
 import { useWallet } from "@/contexts/WalletProvider";
@@ -29,26 +29,35 @@ function LoginContent() {
     }
   }, [loading, user, router, from]);
 
+  const attemptSignIn = useCallback(
+    (key: string) => {
+      authenticatedFor.current = key;
+      setState("authenticating");
+      setError(null);
+
+      signInWithWallet(key).catch((err) => {
+        authenticatedFor.current = null;
+        setState("error");
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to sign in with this wallet. Please try again.",
+        );
+      });
+    },
+    [signInWithWallet],
+  );
+
   // Once a wallet connects, run the real challenge/sign/verify handshake
-  // against the backend automatically — connecting *is* signing in.
+  // against the backend automatically — connecting *is* signing in. Only
+  // fires once per publicKey: a failed attempt sets state to "error" and
+  // waits for an explicit retry rather than looping (signInWithWallet is a
+  // stable reference, so this won't spuriously refire on its own).
   useEffect(() => {
     if (!connected || !publicKey) return;
     if (authenticatedFor.current === publicKey) return;
-
-    authenticatedFor.current = publicKey;
-    setState("authenticating");
-    setError(null);
-
-    signInWithWallet(publicKey).catch((err) => {
-      authenticatedFor.current = null;
-      setState("error");
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to sign in with this wallet. Please try again.",
-      );
-    });
-  }, [connected, publicKey, signInWithWallet]);
+    attemptSignIn(publicKey);
+  }, [connected, publicKey, attemptSignIn]);
 
   const isAuthenticating = state === "authenticating";
 
@@ -95,9 +104,18 @@ function LoginContent() {
             <div
               role="alert"
               aria-live="assertive"
-              className="rounded-lg bg-error/10 border border-error/20 px-4 py-3 text-sm text-error"
+              className="rounded-lg bg-error/10 border border-error/20 px-4 py-3 text-sm text-error space-y-2"
             >
-              {error}
+              <p>{error}</p>
+              {publicKey && (
+                <button
+                  type="button"
+                  onClick={() => attemptSignIn(publicKey)}
+                  className="text-error underline underline-offset-2 hover:no-underline"
+                >
+                  Try again
+                </button>
+              )}
             </div>
           )}
 
