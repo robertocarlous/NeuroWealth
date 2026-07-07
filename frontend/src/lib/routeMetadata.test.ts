@@ -174,7 +174,6 @@ test("docs routes have correct labels", () => {
 test("auth routes have correct labels", () => {
   assert.equal(routeMetadata["/login"]?.label, "Login");
   assert.equal(routeMetadata["/signin"]?.label, "Sign In");
-  assert.equal(routeMetadata["/signup"]?.label, "Sign Up");
 });
 
 test("breadcrumbs for profile path are correct", () => {

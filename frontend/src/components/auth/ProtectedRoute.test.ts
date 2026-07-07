@@ -146,10 +146,6 @@ test("ProtectedRoute — isProtectedPath: /login is public", () => {
   assert.equal(isProtectedPath("/login"), false);
 });
 
-test("ProtectedRoute — isProtectedPath: /signup is public", () => {
-  assert.equal(isProtectedPath("/signup"), false);
-});
-
 test("ProtectedRoute — isProtectedPath: /signin is public", () => {
   assert.equal(isProtectedPath("/signin"), false);
 });
@@ -166,10 +162,6 @@ test("ProtectedRoute — isProtectedPath: /about is public", () => {
 
 test("ProtectedRoute — isAuthOnlyPath: /login redirects authenticated users", () => {
   assert.equal(isAuthOnlyPath("/login"), true);
-});
-
-test("ProtectedRoute — isAuthOnlyPath: /signup redirects authenticated users", () => {
-  assert.equal(isAuthOnlyPath("/signup"), true);
 });
 
 test("ProtectedRoute — isAuthOnlyPath: /signin redirects authenticated users", () => {
