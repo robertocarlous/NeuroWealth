@@ -145,7 +145,7 @@ test("AuthContext — authenticated: getSession is idempotent across multiple ca
 // setLoading(false). Tests here cover the adapter contract that drives each branch.
 
 test("AuthContext — signIn success: returns session with user and valid token", async () => {
-  const session = await mockAuth.signIn("demo@neurowealth.app", "demo123");
+  const session = await mockAuth.signIn("demo@neurowealth.app", "password123");
 
   assert.ok(session.user.id);
   assert.ok(session.token.length > 0);
@@ -153,12 +153,12 @@ test("AuthContext — signIn success: returns session with user and valid token"
 });
 
 test("AuthContext — signIn success: session is persisted in storage", async () => {
-  await mockAuth.signIn("demo@neurowealth.app", "demo123");
+  await mockAuth.signIn("demo@neurowealth.app", "password123");
   assert.equal(store.has(SESSION_STORAGE_KEY), true);
 });
 
 test("AuthContext — signIn success: signed-in session is retrievable via getSession", async () => {
-  await mockAuth.signIn("demo@neurowealth.app", "demo123");
+  await mockAuth.signIn("demo@neurowealth.app", "password123");
   const session = mockAuth.getSession();
   assert.ok(session !== null);
   assert.equal(session.user.email, "demo@neurowealth.app");
@@ -212,27 +212,27 @@ test("AuthContext — signUp failure: duplicate email throws", async () => {
 // Mirrors AuthContext.signOut: adapter.signOut → clearSessionCookie → setUser(null).
 
 test("AuthContext — signOut: removes session from storage", async () => {
-  await mockAuth.signIn("demo@neurowealth.app", "demo123");
+  await mockAuth.signIn("demo@neurowealth.app", "password123");
   mockAuth.signOut();
   assert.equal(store.has(SESSION_STORAGE_KEY), false);
 });
 
 test("AuthContext — signOut: getSession returns null after sign-out", async () => {
-  await mockAuth.signIn("demo@neurowealth.app", "demo123");
+  await mockAuth.signIn("demo@neurowealth.app", "password123");
   mockAuth.signOut();
   assert.equal(mockAuth.getSession(), null);
 });
 
 test("AuthContext — signOut: isAuthenticated returns false after sign-out", async () => {
-  await mockAuth.signIn("demo@neurowealth.app", "demo123");
+  await mockAuth.signIn("demo@neurowealth.app", "password123");
   mockAuth.signOut();
   assert.equal(mockAuth.isAuthenticated(), false);
 });
 
 test("AuthContext — signOut: subsequent signIn succeeds after sign-out", async () => {
-  await mockAuth.signIn("demo@neurowealth.app", "demo123");
+  await mockAuth.signIn("demo@neurowealth.app", "password123");
   mockAuth.signOut();
-  const session = await mockAuth.signIn("demo@neurowealth.app", "demo123");
+  const session = await mockAuth.signIn("demo@neurowealth.app", "password123");
   assert.ok(session !== null);
   assert.equal(mockAuth.isAuthenticated(), true);
 });

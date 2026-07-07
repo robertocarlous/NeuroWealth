@@ -21,7 +21,7 @@ export type { AuthSession } from "./auth-adapter";
 
 const MOCK_USERS: Record<string, { password: string; user: MockAuthUserRecord }> = {
   "demo@neurowealth.app": {
-    password: "demo123",
+    password: "password123",
     user: {
       id: "usr_demo_001",
       email: "demo@neurowealth.app",
