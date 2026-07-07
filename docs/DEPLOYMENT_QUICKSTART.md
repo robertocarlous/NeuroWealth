@@ -1,12 +1,21 @@
 # Deployment Quickstart (Vercel + Railway)
 
+**Live right now:**
+
+| | |
+|---|---|
+| Frontend | https://neurowealth-frontend.vercel.app |
+| Backend | https://neurowealth-production.up.railway.app (`/health`) |
+
 This is the fastest path to a live demo URL for the Level 4 submission: **frontend on Vercel**,
 **backend + Postgres on Railway**. For Kubernetes/production-grade deployment, see
 [`backend/docs/PRODUCTION_DEPLOYMENT.md`](../backend/docs/PRODUCTION_DEPLOYMENT.md) instead —
 this guide is deliberately the quick path, not the hardened one.
 
 Both steps require signing in to Vercel/Railway with your GitHub account in a browser — that
-part can't be scripted from here.
+part can't be scripted from here. The rest below is what was actually run to produce the live
+deployment above; re-run it (or `git push` to trigger Railway/Vercel's own auto-deploy once
+configured) to redeploy after future changes.
 
 ## 1. Backend + Postgres on Railway
 
