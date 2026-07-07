@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import { config } from '../../config/env';
 import { Keypair } from '@stellar/stellar-sdk';
 
@@ -13,10 +14,18 @@ export interface NonceEntry {
  */
 export const _nonceStoreForTests = new Map<string, NonceEntry>();
 
+/**
+ * SEP-53 message-signing prefix. Wallets (Freighter, etc.) don't sign the raw
+ * message — they sign SHA256("Stellar Signed Message:\n" + message). Skipping
+ * either the prefix or the hash step here makes every real wallet signature
+ * fail verification.
+ * https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0053.md
+ */
+const SEP53_PREFIX = 'Stellar Signed Message:\n';
+
 export default class StellarVerification {
     /**
-     * Verify a Stellar signature.
-     * Freighter signs the raw UTF-8 bytes of the message.
+     * Verify a SEP-53 message signature.
      * Stellar's Keypair.verify() expects a Buffer and a base64-encoded signature.
      */
     verifyStellarSignature(
@@ -26,9 +35,13 @@ export default class StellarVerification {
     ): boolean {
         try {
             const keypair = Keypair.fromPublicKey(publicKey);
-            const messageBytes = Buffer.from(message, 'utf8');
+            const encodedMessage = Buffer.concat([
+                Buffer.from(SEP53_PREFIX, 'utf8'),
+                Buffer.from(message, 'utf8'),
+            ]);
+            const messageHash = createHash('sha256').update(encodedMessage).digest();
             const signatureBytes = Buffer.from(signatureBase64, 'base64');
-            return keypair.verify(messageBytes, signatureBytes);
+            return keypair.verify(messageHash, signatureBytes);
         } catch {
             return false;
         }
