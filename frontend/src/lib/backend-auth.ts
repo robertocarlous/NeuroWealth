@@ -62,14 +62,14 @@ async function verifySignature(
 }
 
 /** Runs the full challenge → sign → verify handshake and caches the JWT. */
-export async function loginWithWallet(publicKey: string): Promise<string> {
+export async function loginWithWallet(publicKey: string): Promise<VerifyResponse> {
   const { nonce } = await requestChallenge(publicKey);
   const signature = await signMessage({ message: nonce, address: publicKey });
-  const { token } = await verifySignature(publicKey, signature);
+  const result = await verifySignature(publicKey, signature);
   if (typeof window !== "undefined") {
-    window.sessionStorage.setItem(TOKEN_STORAGE_KEY, token);
+    window.sessionStorage.setItem(TOKEN_STORAGE_KEY, result.token);
   }
-  return token;
+  return result;
 }
 
 export function getStoredBackendToken(): string | null {
@@ -81,7 +81,8 @@ export function getStoredBackendToken(): string | null {
 export async function ensureBackendSession(publicKey: string): Promise<string> {
   const existing = getStoredBackendToken();
   if (existing) return existing;
-  return loginWithWallet(publicKey);
+  const { token } = await loginWithWallet(publicKey);
+  return token;
 }
 
 export { backendUrl };

@@ -10,6 +10,8 @@ import React, {
 import type { AuthSession } from "@/lib/auth-adapter";
 import { getAuthAdapter } from "@/lib/auth-provider-factory";
 import { analytics } from "@/lib/analytics";
+import { loginWithWallet } from "@/lib/backend-auth";
+import { adaptApiUser } from "@/lib/user";
 
 import { useRouter } from "next/navigation";
 import {
@@ -24,6 +26,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, name: string, password: string) => Promise<void>;
+  signInWithWallet: (publicKey: string) => Promise<void>;
   signOut: () => void;
 }
 
@@ -111,6 +114,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  /**
+   * Sign in with a connected Stellar wallet: runs the real challenge/sign/verify
+   * handshake against the backend (see lib/backend-auth.ts), then persists the
+   * resulting session the same way signIn/signUp do so ProtectedRoute and the
+   * rest of the app don't need to know the difference.
+   */
+  const signInWithWallet = async (publicKey: string) => {
+    setLoading(true);
+    try {
+      const { token, userId, expiresAt } = await loginWithWallet(publicKey);
+      const sessionUser = adaptApiUser({ id: userId, walletAddress: publicKey });
+      const session: AuthSession = {
+        user: sessionUser,
+        token,
+        expiresAt: new Date(expiresAt).getTime(),
+      };
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+      }
+      setUser(session.user);
+      setSessionCookie(session);
+      analytics.track("auth_sign_in", { userId: session.user.id, method: "wallet" });
+    } catch (err) {
+      analytics.track("auth_sign_in_failed", { method: "wallet" });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const signOut = () => {
     analytics.track("auth_sign_out", { userId: user?.id });
     authAdapter.signOut();
@@ -120,7 +153,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider
+      value={{ user, loading, signIn, signUp, signInWithWallet, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );

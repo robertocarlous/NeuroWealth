@@ -1,30 +1,27 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts";
+import { useWallet } from "@/contexts/WalletProvider";
 import { MAIN_CONTENT_LANDMARK_ID } from "@/lib/app-landmarks";
-import { Loader2, Zap, Eye, EyeOff, Github, Chrome } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { FormField } from "@/components/ui";
+import { Zap } from "lucide-react";
+import WalletConnectButton from "@/components/WalletConnectButton";
 
 export const dynamic = "force-dynamic";
 
-type LoginState = "idle" | "loading" | "error" | "success";
+type SignInState = "idle" | "authenticating" | "error";
 
 function LoginContent() {
-  const { signIn, user, loading } = useAuth();
+  const { user, loading, signInWithWallet } = useAuth();
+  const { connected, publicKey } = useWallet();
   const router = useRouter();
   const searchParams = useSearchParams();
   const from = searchParams.get("from") ?? "/dashboard";
 
-  const [state, setState] = useState<LoginState>("idle");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [formError, setFormError] = useState<string | null>(null);
+  const [state, setState] = useState<SignInState>("idle");
+  const [error, setError] = useState<string | null>(null);
+  const authenticatedFor = useRef<string | null>(null);
 
   useEffect(() => {
     if (!loading && user) {
@@ -32,71 +29,28 @@ function LoginContent() {
     }
   }, [loading, user, router, from]);
 
-  const validate = () => {
-    let valid = true;
-    if (!email) {
-      setEmailError("Email is required.");
-      valid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setEmailError("Enter a valid email address.");
-      valid = false;
-    } else {
-      setEmailError(null);
-    }
+  // Once a wallet connects, run the real challenge/sign/verify handshake
+  // against the backend automatically — connecting *is* signing in.
+  useEffect(() => {
+    if (!connected || !publicKey) return;
+    if (authenticatedFor.current === publicKey) return;
 
-    if (!password) {
-      setPasswordError("Password is required.");
-      valid = false;
-    } else if (password.length < 6) {
-      setPasswordError("Password must be at least 6 characters.");
-      valid = false;
-    } else {
-      setPasswordError(null);
-    }
+    authenticatedFor.current = publicKey;
+    setState("authenticating");
+    setError(null);
 
-    return valid;
-  };
+    signInWithWallet(publicKey).catch((err) => {
+      authenticatedFor.current = null;
+      setState("error");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to sign in with this wallet. Please try again.",
+      );
+    });
+  }, [connected, publicKey, signInWithWallet]);
 
-  const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      setFormError(null);
-      if (!validate()) return;
-
-      setState("loading");
-      try {
-        await new Promise((r) => setTimeout(r, 900));
-        // Mock: treat demo credentials as valid
-        if (
-          email === "demo@neurowealth.app" ||
-          password === "password123"
-        ) {
-          await signIn(email, password);
-          setState("success");
-          setTimeout(() => router.replace(from), 800);
-        } else {
-          setState("error");
-          setFormError("Invalid credentials. Try demo@neurowealth.app / password123.");
-        }
-      } catch {
-        setState("error");
-        setFormError("Sign-in failed. Please try again.");
-      }
-    },
-    [email, password, signIn, router, from],
-  );
-
-  const handleDemoFill = () => {
-    setEmail("demo@neurowealth.app");
-    setPassword("password123");
-    setEmailError(null);
-    setPasswordError(null);
-    setFormError(null);
-    setState("idle");
-  };
-
-  const isLoading = state === "loading";
-  const isSuccess = state === "success";
+  const isAuthenticating = state === "authenticating";
 
   return (
     <main
@@ -120,193 +74,38 @@ function LoginContent() {
               Sign in to your account
             </h1>
             <p className="mt-1 text-sm text-text-secondary">
-              Connect your wallet or use a demo account.
+              Connect your Stellar wallet — no email or password needed.
             </p>
           </div>
 
-          {/* Success state */}
-          {isSuccess && (
+          {/* Authenticating state */}
+          {isAuthenticating && (
             <div
               role="status"
               aria-live="polite"
-              className="rounded-lg bg-green-500/10 border border-green-500/20 px-4 py-3 text-sm text-green-400 flex items-center gap-2"
+              className="rounded-lg bg-primary/10 border border-primary/20 px-4 py-3 text-sm text-primary flex items-center gap-2"
             >
-              <Zap className="w-4 h-4 shrink-0" aria-hidden="true" />
-              Signed in! Redirecting…
+              <Zap className="w-4 h-4 shrink-0 animate-pulse" aria-hidden="true" />
+              Verifying wallet signature…
             </div>
           )}
 
-          {/* Form error (invalid credentials) */}
-          {state === "error" && formError && (
+          {/* Error */}
+          {state === "error" && error && (
             <div
               role="alert"
               aria-live="assertive"
               className="rounded-lg bg-error/10 border border-error/20 px-4 py-3 text-sm text-error"
             >
-              {formError}
+              {error}
             </div>
           )}
 
-          {/* Login form */}
-          <form onSubmit={handleSubmit} noValidate className="space-y-4">
-            <FormField
-              id="email"
-              label="Email address"
-              error={emailError ?? undefined}
-              className="space-y-1"
-              labelClassName="block text-sm font-medium text-text-primary"
-              errorCompact
-              errorIcon={false}
-            >
-              {({ id, "aria-describedby": ariaDescribedBy, "aria-invalid": ariaInvalid }) => (
-                <input
-                  id={id}
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setEmailError(null);
-                    setFormError(null);
-                    if (state === "error") setState("idle");
-                  }}
-                  disabled={isLoading || isSuccess}
-                  aria-describedby={ariaDescribedBy}
-                  aria-invalid={ariaInvalid}
-                  placeholder="you@example.com"
-                  className={cn(
-                    "w-full rounded-lg border bg-surface px-3 py-2 text-sm text-text-primary placeholder:text-text-muted outline-none transition-colors",
-                    "focus:ring-2 focus:ring-primary/40 focus:border-primary/60",
-                    emailError
-                      ? "border-error focus:ring-error/30"
-                      : "border-border",
-                    (isLoading || isSuccess) && "opacity-50 cursor-not-allowed",
-                  )}
-                />
-              )}
-            </FormField>
-
-            <FormField
-              id="password"
-              label="Password"
-              error={passwordError ?? undefined}
-              className="space-y-1"
-              labelClassName="block text-sm font-medium text-text-primary"
-              errorCompact
-              errorIcon={false}
-            >
-              {({ id, "aria-describedby": ariaDescribedBy, "aria-invalid": ariaInvalid }) => (
-                <div className="relative">
-                  <input
-                    id={id}
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                      setPasswordError(null);
-                      setFormError(null);
-                      if (state === "error") setState("idle");
-                    }}
-                    disabled={isLoading || isSuccess}
-                    aria-describedby={ariaDescribedBy}
-                    aria-invalid={ariaInvalid}
-                    placeholder="••••••••"
-                    className={cn(
-                      "w-full rounded-lg border bg-surface px-3 py-2 pr-10 text-sm text-text-primary placeholder:text-text-muted outline-none transition-colors",
-                      "focus:ring-2 focus:ring-primary/40 focus:border-primary/60",
-                      passwordError
-                        ? "border-error focus:ring-error/30"
-                        : "border-border",
-                      (isLoading || isSuccess) && "opacity-50 cursor-not-allowed",
-                    )}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" aria-hidden="true" />
-                    ) : (
-                      <Eye className="w-4 h-4" aria-hidden="true" />
-                    )}
-                  </button>
-                </div>
-              )}
-            </FormField>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={isLoading || isSuccess}
-              data-qa="login-submit-button"
-              className="btn-primary w-full flex items-center justify-center gap-2 min-h-[44px] text-sm"
-              aria-label="Sign in"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                  Signing in…
-                </>
-              ) : isSuccess ? (
-                <>
-                  <Zap className="w-4 h-4" aria-hidden="true" />
-                  Redirecting…
-                </>
-              ) : (
-                "Sign in"
-              )}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center" aria-hidden="true">
-              <div className="w-full border-t border-border" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-card px-2 text-text-muted">or continue with</span>
-            </div>
-          </div>
-
-          {/* Social placeholders */}
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => alert("Google sign-in coming soon.")}
-              className="flex items-center justify-center gap-2 rounded-lg border border-border bg-surface px-4 min-h-[44px] text-sm text-text-secondary hover:bg-surface/80 transition-colors"
-              aria-label="Sign in with Google (coming soon)"
-            >
-              <Chrome className="w-4 h-4 shrink-0" aria-hidden="true" />
-              Google
-            </button>
-            <button
-              type="button"
-              onClick={() => alert("GitHub sign-in coming soon.")}
-              className="flex items-center justify-center gap-2 rounded-lg border border-border bg-surface px-4 min-h-[44px] text-sm text-text-secondary hover:bg-surface/80 transition-colors"
-              aria-label="Sign in with GitHub (coming soon)"
-            >
-              <Github className="w-4 h-4 shrink-0" aria-hidden="true" />
-              GitHub
-            </button>
-          </div>
-
-          {/* Demo shortcut */}
-          <p className="text-center text-xs text-text-muted">
-            No account?{" "}
-            <button
-              type="button"
-              onClick={handleDemoFill}
-              className="text-primary underline-offset-2 hover:underline"
-            >
-              Fill demo credentials
-            </button>
-          </p>
+          <WalletConnectButton theme="dark" />
 
           <p className="text-center text-xs text-text-muted">
-            Wallet integration (Freighter) coming soon.
+            Your wallet signature proves ownership — no account, email, or password
+            required. New wallets are created automatically on first connect.
           </p>
         </div>
       </div>
