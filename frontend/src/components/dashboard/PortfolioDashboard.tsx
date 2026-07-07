@@ -16,7 +16,9 @@ import {
 } from "@/lib/formatters";
 import { ApiRequestError, apiRequest } from "@/lib/api-client";
 import { useSandbox, ScenarioType } from "@/contexts/SandboxContext";
-import { AllocationChart } from "./AllocationChart";
+import { AllocationSection } from "./AllocationSection";
+import { ActivitySection } from "./ActivitySection";
+import { SummarySection, type SummaryCard } from "./SummarySection";
 import { useI18n } from "@/contexts/I18nContext";
 
 type ThemeMode = "light" | "dark";
@@ -44,32 +46,6 @@ function getValueTone(value: number): "positive" | "negative" | "neutral" {
   if (value > 0) return "positive";
   if (value < 0) return "negative";
   return "neutral";
-}
-
-function buildDonutBackground(allocation: AllocationItem[]): string {
-  let start = 0;
-
-  const segments = allocation.map((item) => {
-    const end = start + item.share;
-    const segment = `${toneMap[item.tone]} ${start}% ${end}%`;
-    start = end;
-    return segment;
-  });
-
-  return `conic-gradient(${segments.join(", ")})`;
-}
-
-function renderActivityIcon(kind: ActivityItem["kind"]) {
-  switch (kind) {
-    case "deposit":
-      return <ArrowDownIcon />;
-    case "withdrawal":
-      return <ArrowUpIcon />;
-    case "rebalance":
-      return <ShuffleIcon />;
-    default:
-      return <SparkIcon />;
-  }
 }
 
 function renderSourceLabel(source: PortfolioPayload["source"], t: any) {
@@ -147,7 +123,7 @@ export function PortfolioDashboard() {
     setRetryNonce((value) => value + 1);
   }
 
-  const summaryCards = portfolio
+  const summaryCards: SummaryCard[] = portfolio
     ? [
         {
           label: "Total balance",
@@ -279,189 +255,22 @@ export function PortfolioDashboard() {
             </div>
           ) : (
             <>
-              <div className={styles.summaryGrid}>
-                {loading ? (
-                  <SummarySkeleton />
-                ) : (
-                  summaryCards.map((card) => (
-                    <MetricCard {...card} key={card.label} />
-                  ))
-                )}
-              </div>
+              <SummarySection loading={loading} cards={summaryCards} />
 
               <div className={styles.contentGrid}>
-                <article className={`${styles.card} ${styles.panel}`}>
-                  <header className={styles.panelHeader}>
-                    <div>
-                      <h2 className={styles.panelTitle}>{t.allocationTitle}</h2>
-                      <p className={styles.panelMeta}>{t.allocationDesc}</p>
-                    </div>
-                    {!loading && portfolio ? (
-                      <span className={styles.chip}>
-                        {portfolio.allocation.length} allocation
-                        {portfolio.allocation.length === 1 ? " " + t.line : " " + t.lines}
-                      </span>
-                    ) : null}
-                  </header>
+                <AllocationSection
+                  loading={loading}
+                  error={null}
+                  allocation={portfolio?.allocation ?? []}
+                  onRetry={resetToLivePreview}
+                />
 
-                  {loading ? (
-                    <div className={styles.emptyState}>
-                      <span className={styles.skeletonValue} />
-                      <span
-                        className={`${styles.skeletonLine} ${styles.skeletonCopy}`}
-                      />
-                    </div>
-                  ) : portfolio && portfolio.allocation.length > 0 ? (
-                      <div className={styles.allocationLayout}>
-                        <AllocationChart 
-                          data={portfolio.allocation.map(item => ({
-                            name: item.label,
-                            value: item.amount,
-                            tone: item.tone
-                          }))}
-                          height={200}
-                          innerRadius={60}
-                          outerRadius={90}
-                        />
-
-                        <div className={styles.allocationList}>
-                        {portfolio.allocation.map((item) => {
-                          const changeTone = getValueTone(item.change);
-                          const changeClassName =
-                            changeTone === "positive"
-                              ? styles.valuePositive
-                              : changeTone === "negative"
-                                ? styles.valueNegative
-                                : styles.valueNeutral;
-
-                          return (
-                            <div className={styles.allocationRow} key={item.id}>
-                              <div className={styles.allocationIdentity}>
-                                <span
-                                  className={styles.allocationDot}
-                                  style={{ background: toneMap[item.tone] }}
-                                />
-                                <div>
-                                  <p className={styles.allocationName}>
-                                    {item.label}
-                                  </p>
-                                  <p className={styles.allocationSymbol}>
-                                    {item.symbol}
-                                  </p>
-                                </div>
-                              </div>
-                              <span className={styles.allocationShare}>
-                                {formatPercent(item.share)}
-                              </span>
-                              <div className={styles.allocationValueWrap}>
-                                <span className={styles.allocationAmount}>
-                                  {formatCurrency(item.amount)}
-                                </span>
-                                <span
-                                  className={`${styles.allocationChange} ${changeClassName}`}
-                                >
-                                  {formatSignedPercent(item.change)}
-                                </span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ) : (
-                    <EmptyState
-                      copy={t.emptyAllocation}
-                      cta={t.loadSample}
-                      icon={<PieIcon />}
-                      onAction={resetToLivePreview}
-                    />
-                  )}
-                </article>
-
-                <article className={`${styles.card} ${styles.panel}`}>
-                  <header className={styles.panelHeader}>
-                    <div>
-                      <h2 className={styles.panelTitle}>{t.activityTitle}</h2>
-                      <p className={styles.panelMeta}>{t.activityDesc}</p>
-                    </div>
-                    {!loading && portfolio ? (
-                      <span className={styles.chip}>
-                        {portfolio.activity.length} {portfolio.activity.length === 1 ? t.event : t.events}
-                      </span>
-                    ) : null}
-                  </header>
-
-                  {loading ? (
-                    <div className={styles.emptyState}>
-                      <span className={styles.skeletonValue} />
-                      <span
-                        className={`${styles.skeletonLine} ${styles.skeletonCopy}`}
-                      />
-                    </div>
-                  ) : portfolio && portfolio.activity.length > 0 ? (
-                    <div className={styles.activityList}>
-                      {portfolio.activity.map((item) => {
-                        const statusClassName =
-                          item.status === "pending"
-                            ? styles.statusPending
-                            : item.status === "scheduled"
-                              ? styles.statusScheduled
-                              : styles.statusCompleted;
-
-                        const amountTone = getValueTone(item.amount ?? 0);
-                        const amountClassName =
-                          amountTone === "positive"
-                            ? styles.valuePositive
-                            : amountTone === "negative"
-                              ? styles.valueNegative
-                              : styles.valueNeutral;
-
-                        return (
-                          <div className={styles.activityItem} key={item.id}>
-                            <div className={styles.activityIcon}>
-                              {renderActivityIcon(item.kind)}
-                            </div>
-
-                            <div className={styles.activityBody}>
-                              <div className={styles.activityTitleRow}>
-                                <p className={styles.activityTitle}>
-                                  {item.title}
-                                </p>
-                                <span
-                                  className={`${styles.statusBadge} ${statusClassName}`}
-                                >
-                                  {item.status}
-                                </span>
-                              </div>
-                              <p className={styles.activityDetail}>
-                                {item.detail}
-                              </p>
-                              <div className={styles.activityMeta}>
-                                <span>{activityLabels[item.kind]}</span>
-                                <span>{formatTimestamp(item.occurredAt)}</span>
-                              </div>
-                            </div>
-
-                            <div
-                              className={`${styles.activityAmount} ${amountClassName}`}
-                            >
-                              {item.amount == null
-                                ? t.noAmount
-                                : formatSignedCurrency(item.amount)}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <EmptyState
-                      copy={t.emptyActivity}
-                      cta={t.loadSample}
-                      icon={<ActivityIcon />}
-                      onAction={resetToLivePreview}
-                    />
-                  )}
-                </article>
+                <ActivitySection
+                  loading={loading}
+                  error={null}
+                  activity={portfolio?.activity ?? []}
+                  onRetry={resetToLivePreview}
+                />
               </div>
             </>
           )}
