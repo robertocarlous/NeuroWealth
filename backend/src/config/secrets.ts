@@ -70,7 +70,11 @@ class AwsSsmSecretsProvider implements SecretsProvider {
   /** Fetch a single parameter from SSM, update the cache, and return the value. */
   private async fetchOne(key: string): Promise<string> {
     // Dynamic import so the SDK is only loaded when the aws-ssm backend is active.
-    const { SSMClient, GetParameterCommand } = await import('@aws-sdk/client-ssm' as string) as typeof import('@aws-sdk/client-ssm')
+    // @aws-sdk/client-ssm is an optional dependency (only needed for this backend).
+    // The module specifier is built at runtime (not a string literal) so
+    // TypeScript doesn't try to statically resolve its types at build time.
+    const awsSsmModuleName = ['@aws-sdk', 'client-ssm'].join('/')
+    const { SSMClient, GetParameterCommand }: any = await import(awsSsmModuleName)
     const client = new SSMClient({})
     const paramName = `${this.ssmPrefix}/${key}`
     const result = await client.send(

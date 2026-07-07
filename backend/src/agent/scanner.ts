@@ -231,7 +231,6 @@ async function saveProtocolRates(protocols: YieldProtocol[]): Promise<void> {
           supplyApy: protocol.apy as any,
           tvl: protocol.tvl === undefined ? undefined : (protocol.tvl as any),
           network: networkLabel as any,
-          rawResponse: JSON.stringify({ fetchedAt: new Date(), source: protocol.name }),
         },
       });
     }

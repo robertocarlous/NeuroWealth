@@ -168,14 +168,14 @@ router.get(
       if (timeRangeStart) {
         const startDate = new Date(timeRangeStart as string)
         if (!isNaN(startDate.getTime())) {
-          filtered = filtered.filter(e => e.createdAt >= startDate)
+          filtered = filtered.filter(e => new Date(e.createdAt) >= startDate)
         }
       }
 
       if (timeRangeEnd) {
         const endDate = new Date(timeRangeEnd as string)
         if (!isNaN(endDate.getTime())) {
-          filtered = filtered.filter(e => e.createdAt <= endDate)
+          filtered = filtered.filter(e => new Date(e.createdAt) <= endDate)
         }
       }
 
