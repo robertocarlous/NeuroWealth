@@ -102,44 +102,22 @@ export function VaultDashboard() {
         </div>
       ) : (
         <>
-          {/* Balance + agent status */}
+          {/* Balance */}
           <div className="card p-6 space-y-5">
             {loading && !balance ? (
               <div className="animate-pulse space-y-3">
                 <div className="h-3 w-24 rounded bg-surface" />
                 <div className="h-9 w-40 rounded bg-surface" />
-                <div className="h-4 w-72 rounded bg-surface" />
               </div>
             ) : (
-              <>
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-text-muted">
-                    Your balance
-                  </p>
-                  <p className="text-3xl font-bold text-text-primary font-mono mt-1">
-                    {formatCurrency(balance?.balance ?? 0)}
-                  </p>
-                </div>
-
-                <p className="text-sm text-text-secondary leading-relaxed">
-                  {isDeployed && vaultState ? (
-                    <>
-                      Currently earning{" "}
-                      <span className="font-semibold text-success">
-                        {formatApy(vaultState.apy)} APY
-                      </span>{" "}
-                      in{" "}
-                      <span className="font-medium text-text-primary capitalize">
-                        {vaultState.activeProtocol}
-                      </span>{" "}
-                      — the AI agent moved your funds there automatically and
-                      rebalances hourly if a better opportunity appears.
-                    </>
-                  ) : (
-                    "Not yet deployed to a yield strategy — once you deposit, the agent moves your funds into the best available protocol within the hour."
-                  )}
+              <div>
+                <p className="text-xs uppercase tracking-wide text-text-muted">
+                  Your balance
                 </p>
-              </>
+                <p className="text-3xl font-bold text-text-primary font-mono mt-1">
+                  {formatCurrency(balance?.balance ?? 0)}
+                </p>
+              </div>
             )}
 
             <div className="flex gap-3 pt-1">
@@ -164,6 +142,55 @@ export function VaultDashboard() {
                 Withdraw
               </Link>
             </div>
+          </div>
+
+          {/* AI agent status — where your money actually is */}
+          <div className="card p-6 space-y-3" data-qa="agent-status-card">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-text-primary">
+                AI agent status
+              </h2>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+                  isDeployed
+                    ? "bg-success/10 text-success"
+                    : "bg-surface text-text-muted border border-border",
+                )}
+              >
+                <span
+                  className={cn(
+                    "h-1.5 w-1.5 rounded-full",
+                    isDeployed ? "bg-success" : "bg-text-muted",
+                  )}
+                />
+                {isDeployed ? "Active" : "Idle"}
+              </span>
+            </div>
+
+            {loading && !vaultState ? (
+              <div className="h-4 w-64 rounded bg-surface animate-pulse" />
+            ) : isDeployed && vaultState ? (
+              <p className="text-sm text-text-secondary leading-relaxed">
+                Your funds are deployed in{" "}
+                <span className="font-medium text-text-primary capitalize">
+                  {vaultState.activeProtocol}
+                </span>
+                , currently earning{" "}
+                <span className="font-semibold text-success">
+                  {formatApy(vaultState.apy)} APY
+                </span>
+                . The agent checks every hour for a better opportunity and
+                moves your funds automatically if it finds one — no action
+                needed from you.
+              </p>
+            ) : (
+              <p className="text-sm text-text-secondary leading-relaxed">
+                {hasFunds
+                  ? "Your deposit is in the vault and waiting for the agent's next hourly check — it deploys idle funds into the best available protocol (e.g. Blend) automatically."
+                  : "Nothing to deploy yet. Once you deposit, the agent picks up the funds on its next hourly check and moves them into a yield strategy — you don't need to do anything else."}
+              </p>
+            )}
           </div>
 
           {/* Agent activity */}

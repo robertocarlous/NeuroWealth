@@ -7,7 +7,14 @@ import { ensureBackendSession, backendUrl } from "@/lib/backend-auth";
 import { signTransaction } from "@/lib/stellar-wallet-kit";
 import { submitSignedXdr } from "@/lib/soroban-submit";
 import { formatCurrency } from "@/lib/formatters";
+import { getConfiguredStellarNetwork } from "@/lib/stellar-network";
 import { cn } from "@/lib/utils";
+
+/** stellar.expert uses "public" for mainnet, "testnet" for testnet in its URL path. */
+function explorerTxUrl(hash: string): string {
+  const network = getConfiguredStellarNetwork() === "mainnet" ? "public" : "testnet";
+  return `https://stellar.expert/explorer/${network}/tx/${hash}`;
+}
 
 type Kind = "deposit" | "withdraw";
 type Stage = "form" | "pending" | "success" | "failure";
@@ -153,9 +160,31 @@ export function DepositWithdrawForm() {
                 {formatCurrency(Number(amount))} has been{" "}
                 {kind === "deposit" ? "deposited into" : "withdrawn from"} the vault.
               </p>
-              {txHash && (
-                <p className="text-xs text-text-muted break-all font-mono">{txHash}</p>
-              )}
+
+              <div className="rounded-lg bg-surface border border-border p-3 text-left space-y-1.5">
+                <p className="text-xs uppercase tracking-wide text-text-muted">
+                  Transaction hash
+                </p>
+                {txHash ? (
+                  <>
+                    <p className="text-xs font-mono text-text-primary break-all">{txHash}</p>
+                    <a
+                      href={explorerTxUrl(txHash)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block text-xs text-primary underline underline-offset-2 hover:no-underline"
+                    >
+                      View on Stellar Expert ↗
+                    </a>
+                  </>
+                ) : (
+                  <p className="text-xs text-text-muted">
+                    Confirmed, but no hash was returned — check Activity on the
+                    dashboard for this transaction.
+                  </p>
+                )}
+              </div>
+
               <button type="button" onClick={reset} className="btn-primary mt-2">
                 {kind === "deposit" ? "Make another deposit" : "Make another withdrawal"}
               </button>
