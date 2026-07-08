@@ -1,14 +1,17 @@
 import { Suspense } from "react";
-import { PortfolioDashboard } from "@/components/dashboard/PortfolioDashboard";
+import { EarningsDashboard } from "@/components/dashboard/EarningsDashboard";
 import { DashboardSkeleton } from "@/components/ui/Skeleton";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Portfolio — NeuroWealth" };
+export const metadata = { title: "Earnings — NeuroWealth" };
 
 export default function PortfolioPage() {
   return (
-    <Suspense fallback={<DashboardSkeleton />}>
-      <PortfolioDashboard />
-    </Suspense>
+    <ProtectedRoute>
+      <Suspense fallback={<DashboardSkeleton />}>
+        <EarningsDashboard />
+      </Suspense>
+    </ProtectedRoute>
   );
 }
