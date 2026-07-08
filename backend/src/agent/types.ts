@@ -2,6 +2,14 @@
  * Agent Types - Core data structures for the autonomous rebalancing system
  */
 
+/**
+ * Positions aren't assigned a protocol until the agent's first rebalance.
+ * Shared between `stellar/events.ts` (sets it on deposit) and `agent/router.ts`
+ * (treats it as a 0%-APY baseline so the very first deployment isn't blocked
+ * on a "current APY" that doesn't exist yet).
+ */
+export const UNASSIGNED_PROTOCOL = 'unassigned';
+
 export interface YieldProtocol {
   name: string;
   apy: number;

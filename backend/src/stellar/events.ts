@@ -9,6 +9,8 @@ import { logger } from '../utils/logger';
 import { config } from '../config';
 import { DeadLetterQueue } from './dlq';
 import { generateCorrelationId, runWithCorrelationIdAsync } from '../utils/correlation';
+import { UNASSIGNED_PROTOCOL } from '../agent/types';
+import { executeRebalanceIfNeeded, getThresholds } from '../agent/router';
 import {
   ContractEventSchema,
   DepositEventSchema,
@@ -102,13 +104,6 @@ export function getEventMetrics(): Readonly<EventMetrics> {
  * event topics.
  */
 const VAULT_ASSET_SYMBOL = 'USDC';
-
-/**
- * Positions aren't assigned a protocol until the agent's first rebalance;
- * matches the default used when a position is first created (see
- * `auth-controller.ts`).
- */
-const UNASSIGNED_PROTOCOL = 'unassigned';
 
 /**
  * Extract network from config (canonical source of truth).
@@ -421,6 +416,39 @@ export async function handleEvent(event: ContractEvent, tx: any = db): Promise<v
 }
 
 /**
+ * Deploy freshly deposited (unassigned) funds as soon as they're persisted,
+ * instead of waiting for the hourly rebalance cron. Called after a batch
+ * containing a deposit event has committed — safe to run outside any DB
+ * transaction since it submits a real on-chain transaction.
+ *
+ * Errors are swallowed and logged: the hourly `rebalanceCheckJob` in
+ * `agent/loop.ts` re-checks the same unassigned bucket as a safety net, so a
+ * failure here just means deployment happens on the next hourly pass instead
+ * of immediately.
+ */
+async function triggerImmediateDeployment(): Promise<void> {
+  try {
+    const unassignedPositions = await db.position.findMany({
+      where: { status: 'ACTIVE', protocolName: UNASSIGNED_PROTOCOL },
+    });
+
+    if (unassignedPositions.length === 0) return;
+
+    logger.info(`[Immediate Deployment] Deploying ${unassignedPositions.length} unassigned position(s)`);
+
+    await executeRebalanceIfNeeded(
+      UNASSIGNED_PROTOCOL,
+      unassignedPositions.map((p) => ({ id: p.id, amount: p.currentValue.toString() })),
+      getThresholds(),
+    );
+  } catch (error) {
+    logger.error('[Immediate Deployment] Failed, will fall back to the hourly rebalance check', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+  }
+}
+
+/**
  * Process a batch of events in a single transaction (Issue #55)
  */
 export async function processEventBatch(events: ContractEvent[]): Promise<void> {
@@ -535,6 +563,12 @@ async function fetchEvents(startLedger: number): Promise<void> {
     if (contractEvents.length > 0) {
       // Use batch processing
       await processEventBatch(contractEvents);
+
+      // A deposit just landed and was persisted above — check for deployment
+      // now rather than waiting for the hourly cron (see triggerImmediateDeployment).
+      if (contractEvents.some((e) => e.type === 'deposit')) {
+        void triggerImmediateDeployment();
+      }
     }
 
     // Update cursor in database

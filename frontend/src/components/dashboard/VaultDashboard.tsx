@@ -180,15 +180,15 @@ export function VaultDashboard() {
                 <span className="font-semibold text-success">
                   {formatApy(vaultState.apy)} APY
                 </span>
-                . The agent checks every hour for a better opportunity and
-                moves your funds automatically if it finds one — no action
-                needed from you.
+                . New deposits are deployed within seconds, and the agent
+                re-checks hourly afterward, moving your funds automatically
+                if a better opportunity appears — no action needed from you.
               </p>
             ) : (
               <p className="text-sm text-text-secondary leading-relaxed">
                 {hasFunds
-                  ? "Your deposit is in the vault and waiting for the agent's next hourly check — it deploys idle funds into the best available protocol (e.g. Blend) automatically."
-                  : "Nothing to deploy yet. Once you deposit, the agent picks up the funds on its next hourly check and moves them into a yield strategy — you don't need to do anything else."}
+                  ? "Your deposit is in the vault — the agent deploys idle funds into the best available protocol (e.g. Blend) within seconds of a deposit confirming on-chain. Refresh in a moment if this doesn't update right away."
+                  : "Nothing to deploy yet. As soon as you deposit, the agent picks up the funds and moves them into a yield strategy within seconds — you don't need to do anything else."}
               </p>
             )}
           </div>

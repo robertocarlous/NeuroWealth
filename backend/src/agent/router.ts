@@ -4,7 +4,7 @@
 
 import { logger } from '../utils/logger';
 import { getCorrelationId } from '../utils/correlation';
-import { ProtocolComparison, RebalanceDetails, RebalanceThresholds } from './types';
+import { ProtocolComparison, RebalanceDetails, RebalanceThresholds, UNASSIGNED_PROTOCOL } from './types';
 import { scanAllProtocols, getCurrentOnChainApy } from './scanner';
 import { triggerRebalance as submitRebalance } from '../stellar/contract';
 import db from '../db';
@@ -56,9 +56,14 @@ export async function compareProtocols(
   thresholds: RebalanceThresholds = DEFAULT_THRESHOLDS
 ): Promise<ProtocolComparison | null> {
   try {
-    // Get current on-chain APY
-    const currentApy = await getCurrentOnChainApy(currentProtocol);
-    if (!currentApy) {
+    // Freshly deposited funds have no protocol yet (see UNASSIGNED_PROTOCOL) —
+    // treat them as earning 0%, since there's no on-chain rate to look up,
+    // so the very first deployment isn't blocked waiting on one.
+    const currentApy =
+      currentProtocol === UNASSIGNED_PROTOCOL
+        ? 0
+        : await getCurrentOnChainApy(currentProtocol);
+    if (currentApy === null) {
       logger.warn(`Cannot get current APY for ${currentProtocol}`);
       return null;
     }
