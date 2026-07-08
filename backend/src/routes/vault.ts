@@ -6,13 +6,16 @@ import {
   getActiveProtocol,
   getOnChainBalance,
   buildUnsignedVaultTransaction,
+  STROOPS_PER_TOKEN,
 } from '../stellar/contract'
 
 const router = Router()
 
-function toNumber(value: unknown): number {
+/** Converts a raw on-chain amount (7-decimal stroops) to a human-readable token amount. */
+function toTokenAmount(value: unknown): number {
   const parsed = Number(value)
-  return Number.isFinite(parsed) ? parsed : 0
+  if (!Number.isFinite(parsed)) return 0
+  return parsed / Number(STROOPS_PER_TOKEN)
 }
 
 router.get('/state', async (req: Request, res: Response) => {
@@ -53,8 +56,8 @@ router.get('/balance', requireAuth, async (req: Request, res: Response) => {
   const onChain = await getOnChainBalance(user.walletAddress)
 
   return res.status(200).json({
-    balance: toNumber(onChain.balance),
-    shares: toNumber(onChain.shares),
+    balance: toTokenAmount(onChain.balance),
+    shares: toTokenAmount(onChain.shares),
   })
 })
 

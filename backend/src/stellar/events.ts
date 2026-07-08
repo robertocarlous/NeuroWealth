@@ -3,6 +3,7 @@ import { TransactionType, TransactionStatus, Network } from '@prisma/client';
 import db from '../db';
 import { Decimal } from '@prisma/client/runtime/library';
 import { getRpcServer } from './client';
+import { STROOPS_PER_TOKEN } from './contract';
 import { ContractEvent, DepositEvent, WithdrawEvent, RebalanceEvent, EventMetrics } from './types';
 import { logger } from '../utils/logger';
 import { config } from '../config';
@@ -121,6 +122,16 @@ function extractNetwork(): Network {
 }
 
 /**
+ * The contract reports amounts/shares as raw i128 stroops (7 decimals — see
+ * STROOPS_PER_TOKEN). DB columns (Transaction.amount, Position.depositedAmount
+ * / currentValue) are human-readable token amounts, so every raw on-chain
+ * value must be scaled down before it's persisted.
+ */
+function fromStroops(raw: unknown): string {
+  return new Decimal(raw?.toString() || '0').dividedBy(STROOPS_PER_TOKEN.toString()).toString();
+}
+
+/**
  * Parse deposit event.
  *
  * Real on-chain shape: topics = `(TOPIC_DEPOSIT, user)`, value =
@@ -130,8 +141,8 @@ function parseDepositEvent(event: ContractEvent): DepositEvent {
   const data = scValToNative(event.value);
   return {
     user: data.user,
-    amount: data.amount?.toString() || '0',
-    shares: data.shares?.toString() || '0',
+    amount: fromStroops(data.amount),
+    shares: fromStroops(data.shares),
     assetSymbol: VAULT_ASSET_SYMBOL,
     protocolName: UNASSIGNED_PROTOCOL,
     network: extractNetwork(),
@@ -145,8 +156,8 @@ function parseWithdrawEvent(event: ContractEvent): WithdrawEvent {
   const data = scValToNative(event.value);
   return {
     user: data.user,
-    amount: data.amount?.toString() || '0',
-    shares: data.shares?.toString() || '0',
+    amount: fromStroops(data.amount),
+    shares: fromStroops(data.shares),
     assetSymbol: VAULT_ASSET_SYMBOL,
     protocolName: UNASSIGNED_PROTOCOL,
     network: extractNetwork(),

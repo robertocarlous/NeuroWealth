@@ -15,7 +15,7 @@ import { config } from '../config';
 import { OnChainBalance, TransactionResult } from './types';
 
 const VAULT_CONTRACT_ID = config.stellar.vaultContractId;
-const STROOPS_PER_TOKEN = 10_000_000n;
+export const STROOPS_PER_TOKEN = 10_000_000n;
 
 export type VaultWriteMethod = 'deposit' | 'withdraw';
 
