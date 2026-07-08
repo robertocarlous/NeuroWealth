@@ -166,6 +166,9 @@ GitHub Actions workflows live under `.github/workflows/` and currently cover the
 | Backend | [`backend/docs/openapi.yaml`](backend/docs/openapi.yaml), `SLO_GUIDANCE.md`, `OBSERVABILITY.md`, `RUNBOOK.md`, `TROUBLESHOOTING.md` (all under `backend/docs/`) |
 | Smart contracts | [`smartcontract/ARCHITECTURE.md`](smartcontract/ARCHITECTURE.md), [`smartcontract/EVENTS.md`](smartcontract/EVENTS.md), [`smartcontract/SECURITY.md`](smartcontract/SECURITY.md), [`smartcontract/docs/`](smartcontract/docs/) (Blend/DEX integration, mainnet checklist, state machine) |
 
+Program submission: [`docs/LEVEL4_SUBMISSION.md`](docs/LEVEL4_SUBMISSION.md) (required
+links, proof of user wallet interactions, feedback summary, screenshots).
+
 Issue tracking (frontend): [audit issues](/.github/audit-issues/) (engineering clean-up),
 [backlog](/.github/backlog/) (feature work), [issues index](/.github/ISSUES.md) (label guide).
 
