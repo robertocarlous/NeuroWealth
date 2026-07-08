@@ -208,9 +208,14 @@ async function handleDepositEvent(depositData: DepositEvent, event: ContractEven
     })
   ) as any;
 
+  // Matched on user + asset only (not protocolName): the vault pools every
+  // user's deposit together and the agent moves the whole pool between
+  // protocols, so a user has exactly one active position whose
+  // protocolName reflects wherever the pool currently sits — not a fixed
+  // value the deposit itself carries.
   const position = await timedDbOperation(() =>
     tx.position.findFirst({
-      where: { userId: user.id, protocolName: depositData.protocolName, assetSymbol: depositData.assetSymbol, status: 'ACTIVE' },
+      where: { userId: user.id, assetSymbol: depositData.assetSymbol, status: 'ACTIVE' },
     })
   ) as any;
 
@@ -277,9 +282,10 @@ async function handleWithdrawEvent(withdrawData: WithdrawEvent, event: ContractE
     })
   ) as any;
 
+  // See handleDepositEvent: matched on user + asset only, not protocolName.
   const position = await timedDbOperation(() =>
     tx.position.findFirst({
-      where: { userId: user.id, protocolName: withdrawData.protocolName, assetSymbol: withdrawData.assetSymbol, status: 'ACTIVE' },
+      where: { userId: user.id, assetSymbol: withdrawData.assetSymbol, status: 'ACTIVE' },
     })
   ) as any;
 
@@ -303,6 +309,16 @@ async function handleWithdrawEvent(withdrawData: WithdrawEvent, event: ContractE
  * Handle rebalance event - persist to database
  */
 async function handleRebalanceEvent(rebalanceData: RebalanceEvent, event: ContractEvent, tx: any = db): Promise<void> {
+  // The vault pools every user's funds and moves the whole pool together —
+  // a rebalance event means every active position is now in the new
+  // protocol, not just whichever position triggered the check.
+  const { count } = await timedDbOperation(() =>
+    tx.position.updateMany({
+      where: { status: 'ACTIVE' },
+      data: { protocolName: rebalanceData.protocol, updatedAt: new Date() },
+    })
+  ) as { count: number };
+
   await timedDbOperation(() =>
     tx.protocolRate.create({
       data: {
@@ -315,7 +331,7 @@ async function handleRebalanceEvent(rebalanceData: RebalanceEvent, event: Contra
     })
   );
 
-  logger.info(`[Rebalance] Recorded protocol rate for ${rebalanceData.protocol} at ${rebalanceData.apy}%`);
+  logger.info(`[Rebalance] Moved ${count} active position(s) to ${rebalanceData.protocol}, recorded rate at ${rebalanceData.apy}%`);
 }
 
 /**
