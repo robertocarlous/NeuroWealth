@@ -365,17 +365,22 @@ export function TransactionFlow() {
     await submitReview();
   }
 
-  async function handleRealDepositConfirm() {
+  /** Real, non-custodial deposit or withdrawal: build unsigned XDR on the
+   * backend, sign it with the connected wallet, submit directly to Soroban. */
+  async function handleRealVaultConfirm() {
     if (!quote || !publicKey) {
       return;
     }
 
     const pendingTx: PendingTransaction = {
-      kind: "deposit",
+      kind,
       reference: quote.reference,
       quote,
       statusLabel: "Awaiting network confirmation",
-      message: "Your signed deposit is being confirmed on Stellar testnet.",
+      message:
+        kind === "deposit"
+          ? "Your signed deposit is being confirmed on Stellar testnet."
+          : "Your signed withdrawal is being confirmed on Stellar testnet.",
       completionDelayMs: 0,
       nextStatus: "success",
       failureReason: null,
@@ -388,20 +393,20 @@ export function TransactionFlow() {
 
     try {
       const token = await ensureBackendSession(publicKey);
-      const buildRes = await fetch(`${backendUrl()}/vault/build-transaction`, {
+      const buildRes = await fetch(`${backendUrl()}/api/vault/build-transaction`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          type: "deposit",
+          type: kind === "deposit" ? "deposit" : "withdraw",
           amount: Number(formValues.amount),
           assetSymbol: "USDC",
         }),
       });
       if (!buildRes.ok) {
-        throw new Error(`Failed to build deposit transaction: ${buildRes.status}`);
+        throw new Error(`Failed to build ${kind} transaction: ${buildRes.status}`);
       }
       const { xdr } = await buildRes.json();
 
@@ -441,8 +446,8 @@ export function TransactionFlow() {
     setRecovery(null);
     setLastFailedAction(null);
 
-    if (kind === "deposit" && walletConnected && publicKey && isRealChainFlowConfigured()) {
-      await handleRealDepositConfirm();
+    if (walletConnected && publicKey && isRealChainFlowConfigured()) {
+      await handleRealVaultConfirm();
       return;
     }
 
