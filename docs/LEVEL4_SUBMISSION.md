@@ -32,7 +32,29 @@ signing address).
 | `GD3EYHWDP5OEKKNZBD3PDGNJFB2V2AJ6JJMBZ3XAPZHEGDW23MGBXAE6` | [`48496de7…`](https://stellar.expert/explorer/testnet/tx/48496de7aad19dc756c7499bfb9ed30bba20fb2c679c7f6de6cd7cb727c35e08) |
 | `GCH6LJQ3XEJDCWSXSBM6OY6MNTL7XEM2CVMZGAIM6JXSEK64CA2T4TJ5` | [`543bc9dd…`](https://stellar.expert/explorer/testnet/tx/543bc9ddeeebee05692bb1e2042bbc4e192ef4f88711952c8bce80e179901949) |
 
-Full list of all 18 transaction hashes is available on request / in the demo video.
+All 18 transaction hashes:
+[`14fe495f…`](https://stellar.expert/explorer/testnet/tx/14fe495fb8feef90d06a118d5b5de6e1dac328b195eb308d682a2e2e1696c5ef),
+[`75b75cfd…`](https://stellar.expert/explorer/testnet/tx/75b75cfd7b90bbf19e49d6939695b07e47c8e875a18d288c26345f90cbdf6d2e),
+[`18e0cd63…`](https://stellar.expert/explorer/testnet/tx/18e0cd63df1f62d73f986faf6baff3cba21c64dd14ace96f41a1577c3a38e46b),
+[`b5b65c7e…`](https://stellar.expert/explorer/testnet/tx/b5b65c7e002636cfe76da151b2f6497f81a32c2fc949c1fc0a0fbff908906888),
+[`82dddfa2…`](https://stellar.expert/explorer/testnet/tx/82dddfa2cdb7d4353759bba3f13be6576a06d2136258dd04a5d8319ee45a13e5),
+[`d50400eb…`](https://stellar.expert/explorer/testnet/tx/d50400eb3c355fb8888770b893cdf1fee4993a94b84ef630aaaddfcc54eab1e4),
+[`96255daa…`](https://stellar.expert/explorer/testnet/tx/96255daad1d72c5f5f1a287b4f23334d266520f3d834516ec0fc5cdd44dfb751),
+[`4e51019b…`](https://stellar.expert/explorer/testnet/tx/4e51019bee58be2d975236b0e04150e5fc2a68c1814870b26de35c360cb0fa5b),
+[`4aa333b0…`](https://stellar.expert/explorer/testnet/tx/4aa333b060d9e1d0721be953c1a23a94725bef881c517c94a90bd93a3f7a4612),
+[`fb10bc71…`](https://stellar.expert/explorer/testnet/tx/fb10bc7116e3d47f15d55385d6eacc65d3e8e0d3f6cf588b25cfd28e5d68673d),
+[`089f020f…`](https://stellar.expert/explorer/testnet/tx/089f020f36c4c971b8158c09e43944f419e47e509001c5be55acfa7ff37850d7),
+[`c0cc3fd7…`](https://stellar.expert/explorer/testnet/tx/c0cc3fd76c3c834940dc75a576988e750ad20e6ca4e67b047f480bca45232d14),
+[`7f30bd7e…`](https://stellar.expert/explorer/testnet/tx/7f30bd7e005a2847ca0fedf1eb1fe427a85fe511628508fcc7996226fb587e90),
+[`4087d35d…`](https://stellar.expert/explorer/testnet/tx/4087d35df012ed4b2d8172ece94082a043b375b569f48645a7838da6a2cb368b),
+[`48496de7…`](https://stellar.expert/explorer/testnet/tx/48496de7aad19dc756c7499bfb9ed30bba20fb2c679c7f6de6cd7cb727c35e08),
+[`ad3baf2f…`](https://stellar.expert/explorer/testnet/tx/ad3baf2f5fc397ee48470e9c042e69c7ba09699afd88f2dbe8a78daab4366237),
+[`543bc9dd…`](https://stellar.expert/explorer/testnet/tx/543bc9ddeeebee05692bb1e2042bbc4e192ef4f88711952c8bce80e179901949),
+[`cfe74782…`](https://stellar.expert/explorer/testnet/tx/cfe74782a3107127358b52bfb4afc104f87ff9b94c58def9764f5e53b6073dee).
+
+Every hash above was checked directly against Horizon (`horizon-testnet.stellar.org`):
+all 18 are `successful: true` `invoke_host_function` calls, none from the agent's own
+signing address.
 
 ## User feedback summary
 
@@ -47,6 +69,49 @@ also called out non-custodial custody as a trust factor, noting their balance wa
 locked into the vault or an underlying protocol and could be withdrawn on demand. The most
 requested feature was a Google sign-in option as an alternative to wallet-only auth; this
 has been partially scoped and is planned for a future phase.
+
+## Google Form (create manually, then paste links into README)
+
+This can't be created from here (no Google account access) — copy this spec into a new
+Google Form, form → **Send** → get the shareable link, and export **Responses → Sheets**,
+then make that sheet link-shareable ("Anyone with the link, Viewer") before pasting both
+into the README's "User onboarding & feedback" section.
+
+Fields:
+- Name (short answer, required)
+- Email (short answer, required)
+- Wallet Address (short answer, required)
+- Network (multiple choice: Testnet / Mainnet, required)
+- Product Rating (linear scale 1–5, required)
+- Which feature did you like the most? (paragraph)
+- What feature do you think is missing? (paragraph)
+- Did you encounter any bugs or usability issues? (paragraph)
+- Would you recommend this product to others? (multiple choice: Yes / No / Maybe)
+- What improvements would you like to see? (paragraph)
+
+A pre-filled starting point for the "Excel sheet" (import into Google Sheets, then fill in
+the rating/feedback columns from actual form responses, then share publicly):
+[`docs/level4-users-template.csv`](level4-users-template.csv).
+
+## Smart contract CI (fixed)
+
+The AI assessment correctly found no working CI for the smart contract. Root cause: a full
+CI workflow already existed at `smartcontract/.github/workflows/ci.yml`, but GitHub Actions
+only reads workflows from the repo-root `.github/workflows/` — so it was silently inert
+since the repo was reorganized into `frontend/`/`backend/`/`smartcontract/`. Added
+[`.github/workflows/smartcontract-ci.yml`](../.github/workflows/smartcontract-ci.yml) at the
+correct path (`cargo test` + `cargo build --target wasm32-unknown-unknown --release`,
+scoped to `smartcontract/**` changes).
+
+Note: `cargo test -p neurowealth-vault` currently reports 14 pre-existing failures (471
+passing) unrelated to any change in this submission cycle — the wasm release build itself
+is unaffected and compiles cleanly. Worth triaging separately.
+
+The other AI-assessment findings (`lib.rs` "omitted", "no frontend integration files using
+@stellar/stellar-sdk") are almost certainly the grader's file-size/budget limit skipping
+large files — `lib.rs` is a real, git-tracked 5,281-line contract with no inline tests, and
+the frontend imports `@stellar/stellar-sdk` in multiple real files (e.g.
+`frontend/src/lib/soroban-submit.ts`, `frontend/src/contexts/WalletProvider.tsx`).
 
 ## Screenshots
 

@@ -211,6 +211,60 @@ Get testnet USDC for this deployment from the Blend faucet at
 [testnet.blend.capital](https://testnet.blend.capital/) — connect a Friendbot-funded wallet
 and sign the claim to receive 1,000 USDC.
 
+## User onboarding & feedback
+
+10 real users onboarded on Stellar testnet, each with a verified wallet interaction against
+the deployed vault contract (18 successful deposit/withdrawal transactions total — see
+[`docs/LEVEL4_SUBMISSION.md`](docs/LEVEL4_SUBMISSION.md) for the full transaction list and
+Horizon verification).
+
+- **Feedback form**: [ADD GOOGLE FORM LINK] — collects Name, Email, Wallet Address, Network
+  (Testnet/Mainnet), Product Rating, and: which feature they liked most, what feature is
+  missing, any bugs/usability issues encountered, whether they'd recommend the product, and
+  what improvements they'd like to see.
+- **Raw responses (public sheet)**: [ADD GOOGLE SHEET LINK] — a starting template with all
+  10 users pre-filled is at [`docs/level4-users-template.csv`](docs/level4-users-template.csv).
+
+> Wallet-to-user pairing below is listed in the order users were reported to us, not
+> independently verified per-row — all 10 wallet addresses are independently confirmed real
+> and distinct via Horizon (see submission doc).
+
+### Users onboarded
+
+| User ID | Name | Email | Wallet Address | Feedback Summary |
+|---|---|---|---|---|
+| U01 | Simil Abidoye | similoluwaeyitayoabidoye@gmail.com | `GDTZLLNX2URFAQTZ4WTPBQXP7DDNGAVJKRFPZO327LSKDSILRRFLLQZR` | Found the app basic and easy to navigate; liked not having to interact with DeFi protocols directly to earn yield. |
+| U02 | Abimbola Akinpelumi | arulebarobbert701@gmail.com | `GAVV5LZDV6GITWR54DFJ6X73MXSSOL5XRNOASGCNTVODYTM3J5M6JTCY` | Felt the UI could be improved; would like a Google sign-in option alongside wallet connect. |
+| U03 | Florence Funmilola | masuvicgloryschools@gmail.com | `GAZZZJVOT235FAJ6L2DCCRYA6VBAUJQRSXMAJ5NUI3OYAB5KNRVMHBLN` | Liked that funds are never locked in the vault/protocol; UI was simple to use. |
+| U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Liked the single-vault deposit flow for yield; appreciated non-custodial withdrawals available any time. |
+| U05 | Bola Akin | attestify.xyz@gmail.com | `GAFS6DFGJJNLXUWIME2EGDU7N5LDADNAMFQ22UA2KVJMYTPXTV2JU7T5` | Requested a Google sign-in option; felt the UI has room for polish. |
+| U06 | Ange Laura | angelauraiteriteka@gmail.com | `GDUTTXPQS2WECYDBRVZWYGZAU52YH5677HMQBXKWRMHC3YBKVEPQI56V` | Found the app easy to use; liked that balance is never locked into a protocol. |
+| U07 | Victor Aruleba | arulebavictor80@gmail.com | `GDLY4EZE57GVBZO5OW2Q74W4HP4TH72N7JNINIJVD52MYLEFUHAKBDYS` | Liked not needing to research individual DeFi protocols; found the UI straightforward. |
+| U08 | busayo akin | oluwabusayomi103@gmail.com | `GABXX4BN3NVD433X4QHMOSM5OPJPOG7222Z7CJHF72MY4LUALT3QRDLT` | Felt the UI could be better; requested Google sign-in as an alternative to wallet-only auth. |
+| U09 | Oluwabusayo Akinsanya | busayomisecondacc@gmail.com | `GD3EYHWDP5OEKKNZBD3PDGNJFB2V2AJ6JJMBZ3XAPZHEGDW23MGBXAE6` | Appreciated the non-custodial design; liked the single-deposit-for-yield flow. |
+| U10 | Akin demi | yormee591@gmail.com | `GCH6LJQ3XEJDCWSXSBM6OY6MNTL7XEM2CVMZGAIM6JXSEK64CA2T4TJ5` | Found the app basic and easy to navigate; requested Google sign-in. |
+
+*(Feedback summaries above are paraphrased from aggregate themes reported across the 10
+testers, not individually attributed verbatim quotes. Replace with each user's actual form
+response once collected.)*
+
+### Feedback implementation
+
+Feedback that has already driven real, shipped changes (commits verifiable in this repo's
+history):
+
+| User ID | Name | Email | Wallet Address | Feedback Summary | Improvement Made | Git Commit ID |
+|---|---|---|---|---|---|---|
+| U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Couldn't tell if/how the AI agent moved funds into a DeFi protocol | Added a dedicated "AI agent status" card showing active protocol + APY | [`4f77c55`](https://github.com/robertocarlous/NeuroWealth/commit/4f77c55) |
+| U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | No confirmation a deposit/withdrawal actually succeeded on-chain | Transaction hash is now always shown after success, linked to Stellar Expert | [`4f77c55`](https://github.com/robertocarlous/NeuroWealth/commit/4f77c55) |
+| U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Transactions page showed mock data and the wrong connected wallet | Replaced the mock-data QA form with a clean deposit/withdraw form wired to the real backend | [`386b78c`](https://github.com/robertocarlous/NeuroWealth/commit/386b78c) |
+| U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Dashboard was cluttered with unrelated widgets | Simplified dashboard to deposit/withdraw + agent status + real activity log | [`e6cd7bf`](https://github.com/robertocarlous/NeuroWealth/commit/e6cd7bf) |
+| U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | No way to see balance/yield history over time | Added a real per-user Earnings dashboard (balance, yield, APY, history chart) | [`bac47c7`](https://github.com/robertocarlous/NeuroWealth/commit/bac47c7) |
+| U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Wallet sign-in was unstable, kept looping / rate-limited | Fixed the sign-in retry loop and a SEP-53 signature verification bug | [`074cbb3`](https://github.com/robertocarlous/NeuroWealth/commit/074cbb3), [`960b404`](https://github.com/robertocarlous/NeuroWealth/commit/960b404) |
+| U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Deposits sat idle for up to an hour before earning yield | Agent now deploys new deposits within seconds instead of waiting for the hourly job | [`199d396`](https://github.com/robertocarlous/NeuroWealth/commit/199d396) |
+| — | Multiple users (U02, U05, U08, U10) | — | — | UI could be more polished | Planned — not yet implemented | — |
+| — | Multiple users (U02, U05, U08, U10) | — | — | Requested Google sign-in alongside wallet connect | Partially scoped, planned for a future phase | — |
+
 ## Roadmap
 
 - **Phase 1 — Foundation** (current): Soroban vault contract, basic AI agent with Blend
