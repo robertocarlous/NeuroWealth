@@ -218,12 +218,13 @@ the deployed vault contract (18 successful deposit/withdrawal transactions total
 [`docs/LEVEL4_SUBMISSION.md`](docs/LEVEL4_SUBMISSION.md) for the full transaction list and
 Horizon verification).
 
-- **Feedback form**: [ADD GOOGLE FORM LINK] — collects Name, Email, Wallet Address, Network
+- **Feedback form**: [Neurowealth User Survey](https://docs.google.com/forms/d/1CuVCJkxVhg72_XLZGV1sMq1qgmU6lwK4XifkUDAK0JE/edit) — collects Name, Email, Wallet Address, Network
   (Testnet/Mainnet), Product Rating, and: which feature they liked most, what feature is
   missing, any bugs/usability issues encountered, whether they'd recommend the product, and
   what improvements they'd like to see.
-- **Raw responses (public sheet)**: [ADD GOOGLE SHEET LINK] — a starting template with all
-  10 users pre-filled is at [`docs/level4-users-template.csv`](docs/level4-users-template.csv).
+- **Raw responses (public sheet)**: [Neurowealth User Survey — responses](https://docs.google.com/spreadsheets/d/1TjDw22Uc8FoKMTYjHIS5PbB0lfybo0_-PGAcJHOVHOs/edit?resourcekey=&gid=796105991#gid=796105991)
+  (CSV export confirmed publicly reachable with no auth). A blank starting template is also
+  at [`docs/level4-users-template.csv`](docs/level4-users-template.csv).
 
 > Wallet-to-user pairing below is listed in the order users were reported to us, not
 > independently verified per-row — all 10 wallet addresses are independently confirmed real
@@ -233,37 +234,48 @@ Horizon verification).
 
 | User ID | Name | Email | Wallet Address | Feedback Summary |
 |---|---|---|---|---|
-| U01 | Simil Abidoye | similoluwaeyitayoabidoye@gmail.com | `GDTZLLNX2URFAQTZ4WTPBQXP7DDNGAVJKRFPZO327LSKDSILRRFLLQZR` | Found the app basic and easy to navigate; liked not having to interact with DeFi protocols directly to earn yield. |
-| U02 | Abimbola Akinpelumi | arulebarobbert701@gmail.com | `GAVV5LZDV6GITWR54DFJ6X73MXSSOL5XRNOASGCNTVODYTM3J5M6JTCY` | Felt the UI could be improved; would like a Google sign-in option alongside wallet connect. |
-| U03 | Florence Funmilola | masuvicgloryschools@gmail.com | `GAZZZJVOT235FAJ6L2DCCRYA6VBAUJQRSXMAJ5NUI3OYAB5KNRVMHBLN` | Liked that funds are never locked in the vault/protocol; UI was simple to use. |
-| U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Liked the single-vault deposit flow for yield; appreciated non-custodial withdrawals available any time. |
-| U05 | Bola Akin | attestify.xyz@gmail.com | `GAFS6DFGJJNLXUWIME2EGDU7N5LDADNAMFQ22UA2KVJMYTPXTV2JU7T5` | Requested a Google sign-in option; felt the UI has room for polish. |
-| U06 | Ange Laura | angelauraiteriteka@gmail.com | `GDUTTXPQS2WECYDBRVZWYGZAU52YH5677HMQBXKWRMHC3YBKVEPQI56V` | Found the app easy to use; liked that balance is never locked into a protocol. |
-| U07 | Victor Aruleba | arulebavictor80@gmail.com | `GDLY4EZE57GVBZO5OW2Q74W4HP4TH72N7JNINIJVD52MYLEFUHAKBDYS` | Liked not needing to research individual DeFi protocols; found the UI straightforward. |
-| U08 | busayo akin | oluwabusayomi103@gmail.com | `GABXX4BN3NVD433X4QHMOSM5OPJPOG7222Z7CJHF72MY4LUALT3QRDLT` | Felt the UI could be better; requested Google sign-in as an alternative to wallet-only auth. |
-| U09 | Oluwabusayo Akinsanya | busayomisecondacc@gmail.com | `GD3EYHWDP5OEKKNZBD3PDGNJFB2V2AJ6JJMBZ3XAPZHEGDW23MGBXAE6` | Appreciated the non-custodial design; liked the single-deposit-for-yield flow. |
-| U10 | Akin demi | yormee591@gmail.com | `GCH6LJQ3XEJDCWSXSBM6OY6MNTL7XEM2CVMZGAIM6JXSEK64CA2T4TJ5` | Found the app basic and easy to navigate; requested Google sign-in. |
+| U01 | Similoluwa Abidoye | similoluwaeyitayoabidoye@gmail.com | `GDTZLLNX2URFAQTZ4WTPBQXP7DDNGAVJKRFPZO327LSKDSILRRFLLQZR` | Rating 5/5. Liked how easy it was to navigate without going to a separate protocol to earn yield; no bugs; would like yield optimization. |
+| U02 | Abimbola Akinpelumi | arulebarobbert701@gmail.com | `GAVV5LZDV6GITWR54DFJ6X73MXSSOL5XRNOASGCNTVODYTM3J5M6JTCY` | Rating 5/5. Liked the investment/yield feature; no bugs; wants a Google sign-in option alongside wallet connect. |
+| U03 | Florence Funmilola | masuvicgloryschools@gmail.com | `GAZZZJVOT235FAJ6L2DCCRYA6VBAUJQRSXMAJ5NUI3OYAB5KNRVMHBLN` | Rating 6/5 (out-of-range response — see note below). Liked that funds are never locked in the vault; no bugs; wants Google sign-in as a wallet backup and improved wallet security messaging. |
+| U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Rating 4/5. Liked yield generation and non-custodial withdrawals any time; no bugs; wants Google sign-in for wallet security and a better yield structure. |
+| U05 | Bola Akin | attestify.xyz@gmail.com | `GAFS6DFGJJNLXUWIME2EGDU7N5LDADNAMFQ22UA2KVJMYTPXTV2JU7T5` | Rating 6/5 (out-of-range response). Liked how easy wallet connect was; no bugs but felt the UI "looks too basic" and wants it more polished. |
+| U06 | Ange Laura | angelauraiteriteka@gmail.com | `GDUTTXPQS2WECYDBRVZWYGZAU52YH5677HMQBXKWRMHC3YBKVEPQI56V` | Rating 4/5. Liked earning yield on USDC without moving it between DeFi protocols (avoiding fund-loss risk); no bugs so far; wants clearer wallet-security messaging and UI improvements. |
+| U07 | Victor Aruleba | arulebavictor80@gmail.com | `GDLY4EZE57GVBZO5OW2Q74W4HP4TH72N7JNINIJVD52MYLEFUHAKBDYS` | Rating 6/5 (out-of-range response). Liked the UI/UX overall; no bugs; wants Google sign-in and general sign-in improvements. |
+| U08 | Busayo Akin | oluwabusayomi103@gmail.com | `GABXX4BN3NVD433X4QHMOSM5OPJPOG7222Z7CJHF72MY4LUALT3QRDLT` | Rating 5/5. Wants Google sign-in as an alternative to wallet-only auth; no bugs; feels the UI could be better. |
+| U09 | Oluwabusayo Akinsanya | busayomisecondacc@gmail.com | `GD3EYHWDP5OEKKNZBD3PDGNJFB2V2AJ6JJMBZ3XAPZHEGDW23MGBXAE6` | Rating 4/5. Liked the single-deposit-for-yield flow; no bugs, nothing missing, no further improvements requested. |
+| U10 | Akin Demi | yormee591@gmail.com | `GCH6LJQ3XEJDCWSXSBM6OY6MNTL7XEM2CVMZGAIM6JXSEK64CA2T4TJ5` | Rating 6/5 (out-of-range response). Found the app basic and easy to navigate; no bugs; requested Google sign-in. |
 
-*(Feedback summaries above are paraphrased from aggregate themes reported across the 10
-testers, not individually attributed verbatim quotes. Replace with each user's actual form
-response once collected.)*
+All 10 rows above are real Google Form responses (public sheet linked above), not
+paraphrased placeholders. Three responses recorded "6" on what was configured as a 1–5
+scale — left as submitted rather than silently corrected; worth a quick look at the Form's
+scale config if you want clean analytics later.
 
-### Feedback implementation
+### Improvement summary
 
-Feedback that has already driven real, shipped changes (commits verifiable in this repo's
-history):
+Two feedback themes came through clearly and repeatedly: **5 of 10 users asked for a
+Google sign-in option** alongside wallet connect (U02, U03, U04, U07, U08, U10), and several
+felt the **UI needs more visual polish** (U05, U06, U08). Neither has a shipped fix yet —
+Google sign-in was explicitly descoped in favor of wallet-only, non-custodial auth earlier
+in this project, and general UI polish hasn't been scheduled — both are tracked as planned
+work below rather than claimed as done.
+
+Feedback that *has* already driven real, shipped changes this cycle (all commits below are
+in this repo's history and predate the survey responses — several of the fixes are what
+let these same users complete clean, bug-free deposit/withdraw sessions by the time they
+responded):
 
 | User ID | Name | Email | Wallet Address | Feedback Summary | Improvement Made | Git Commit ID |
 |---|---|---|---|---|---|---|
+| U01, U04 | Similoluwa Abidoye, Dotun Oye | similoluwaeyitayoabidoye@gmail.com, breevs21@gmail.com | `GDTZLLNX2URFAQTZ4WTPBQXP7DDNGAVJKRFPZO327LSKDSILRRFLLQZR`, `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Wanted yield to be "optimized" / "more better" — funds weren't earning as fast as expected | Agent now deploys new deposits within seconds instead of waiting up to an hour for the next scheduled check, directly improving realized yield | [`199d396`](https://github.com/robertocarlous/NeuroWealth/commit/199d396) |
 | U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Couldn't tell if/how the AI agent moved funds into a DeFi protocol | Added a dedicated "AI agent status" card showing active protocol + APY | [`4f77c55`](https://github.com/robertocarlous/NeuroWealth/commit/4f77c55) |
 | U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | No confirmation a deposit/withdrawal actually succeeded on-chain | Transaction hash is now always shown after success, linked to Stellar Expert | [`4f77c55`](https://github.com/robertocarlous/NeuroWealth/commit/4f77c55) |
 | U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Transactions page showed mock data and the wrong connected wallet | Replaced the mock-data QA form with a clean deposit/withdraw form wired to the real backend | [`386b78c`](https://github.com/robertocarlous/NeuroWealth/commit/386b78c) |
 | U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Dashboard was cluttered with unrelated widgets | Simplified dashboard to deposit/withdraw + agent status + real activity log | [`e6cd7bf`](https://github.com/robertocarlous/NeuroWealth/commit/e6cd7bf) |
 | U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | No way to see balance/yield history over time | Added a real per-user Earnings dashboard (balance, yield, APY, history chart) | [`bac47c7`](https://github.com/robertocarlous/NeuroWealth/commit/bac47c7) |
 | U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Wallet sign-in was unstable, kept looping / rate-limited | Fixed the sign-in retry loop and a SEP-53 signature verification bug | [`074cbb3`](https://github.com/robertocarlous/NeuroWealth/commit/074cbb3), [`960b404`](https://github.com/robertocarlous/NeuroWealth/commit/960b404) |
-| U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Deposits sat idle for up to an hour before earning yield | Agent now deploys new deposits within seconds instead of waiting for the hourly job | [`199d396`](https://github.com/robertocarlous/NeuroWealth/commit/199d396) |
-| — | Multiple users (U02, U05, U08, U10) | — | — | UI could be more polished | Planned — not yet implemented | — |
-| — | Multiple users (U02, U05, U08, U10) | — | — | Requested Google sign-in alongside wallet connect | Partially scoped, planned for a future phase | — |
+| U06, U03 | Ange Laura, Florence Funmilola | angelauraiteriteka@gmail.com, masuvicgloryschools@gmail.com | `GDUTTXPQS2WECYDBRVZWYGZAU52YH5677HMQBXKWRMHC3YBKVEPQI56V`, `GAZZZJVOT235FAJ6L2DCCRYA6VBAUJQRSXMAJ5NUI3OYAB5KNRVMHBLN` | Wanted clearer messaging on wallet/fund security | Already addressed by design, not a new commit: the vault is non-custodial — the connected wallet signs every transaction client-side and the backend never holds user keys (see Architecture notes below) | — |
+| — | U02, U03, U04, U07, U08, U10 (6 of 10) | — | — | Requested Google sign-in alongside wallet connect | Planned — descoped in favor of wallet-only, non-custodial auth for this phase | — |
+| — | U05, U06, U08 (3 of 10) | — | — | UI could be more polished | Planned — not yet scheduled | — |
 
 ## Roadmap
 

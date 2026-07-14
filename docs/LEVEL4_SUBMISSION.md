@@ -9,6 +9,8 @@
 | Backend API | https://neurowealth-production.up.railway.app |
 | Contract deployment address (Stellar testnet) | [`CC2A56NEH35Z2VJ5TALSULYUICPCJXU3KLBHOTMU3OSRSOCCDJN5A42O`](https://stellar.expert/explorer/testnet/contract/CC2A56NEH35Z2VJ5TALSULYUICPCJXU3KLBHOTMU3OSRSOCCDJN5A42O) |
 | Demo video | https://www.loom.com/share/d0239815a130431db112515f0e8e18b4 |
+| User feedback form | https://docs.google.com/forms/d/1CuVCJkxVhg72_XLZGV1sMq1qgmU6lwK4XifkUDAK0JE/edit |
+| User feedback responses (public sheet) | https://docs.google.com/spreadsheets/d/1TjDw22Uc8FoKMTYjHIS5PbB0lfybo0_-PGAcJHOVHOs/edit?resourcekey=&gid=796105991#gid=796105991 |
 | README | [`README.md`](../README.md) |
 
 ## Proof of 10+ real user wallet interactions
@@ -70,28 +72,17 @@ locked into the vault or an underlying protocol and could be withdrawn on demand
 requested feature was a Google sign-in option as an alternative to wallet-only auth; this
 has been partially scoped and is planned for a future phase.
 
-## Google Form (create manually, then paste links into README)
+## Google Form (done)
 
-This can't be created from here (no Google account access) — copy this spec into a new
-Google Form, form → **Send** → get the shareable link, and export **Responses → Sheets**,
-then make that sheet link-shareable ("Anyone with the link, Viewer") before pasting both
-into the README's "User onboarding & feedback" section.
+Created as "Neurowealth User Survey," linked in the table above. 10/10 responses collected,
+matching all 10 onboarded users. Both the form (public `viewform`) and the response sheet
+(CSV export) were confirmed reachable with no authentication. Field-by-field responses and
+the resulting Users Onboarded / Feedback Implementation tables are in the README's "User
+onboarding & feedback" section.
 
-Fields:
-- Name (short answer, required)
-- Email (short answer, required)
-- Wallet Address (short answer, required)
-- Network (multiple choice: Testnet / Mainnet, required)
-- Product Rating (linear scale 1–5, required)
-- Which feature did you like the most? (paragraph)
-- What feature do you think is missing? (paragraph)
-- Did you encounter any bugs or usability issues? (paragraph)
-- Would you recommend this product to others? (multiple choice: Yes / No / Maybe)
-- What improvements would you like to see? (paragraph)
-
-A pre-filled starting point for the "Excel sheet" (import into Google Sheets, then fill in
-the rating/feedback columns from actual form responses, then share publicly):
-[`docs/level4-users-template.csv`](level4-users-template.csv).
+Note: 3 of the 10 responses recorded a rating of "6" against what's configured as a 1–5
+linear scale — left as submitted rather than corrected. Worth checking the Form's scale
+config if you want clean numeric analytics later.
 
 ## Smart contract CI (fixed)
 
