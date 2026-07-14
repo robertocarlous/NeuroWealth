@@ -2,8 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "@/contexts";
-import { useWallet } from "@/contexts/WalletProvider";
+import { useAuth, useWallet } from "@/contexts";
 import { MAIN_CONTENT_LANDMARK_ID } from "@/lib/app-landmarks";
 import { Zap } from "lucide-react";
 import WalletConnectButton from "@/components/WalletConnectButton";

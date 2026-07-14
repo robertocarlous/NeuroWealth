@@ -10,8 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useAuth } from "@/contexts";
-import { useWallet } from "@/contexts/WalletProvider";
+import { useAuth, useWallet } from "@/contexts";
 import { ensureBackendSession, backendUrl } from "@/lib/backend-auth";
 import { formatCurrency, formatApy } from "@/lib/formatters";
 import { cn } from "@/lib/utils";

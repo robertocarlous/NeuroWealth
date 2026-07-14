@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useWallet } from "@/contexts/WalletProvider";
+import { useWallet } from "@/contexts";
 import { ensureBackendSession, backendUrl } from "@/lib/backend-auth";
 import { signTransaction } from "@/lib/stellar-wallet-kit";
 import { submitSignedXdr } from "@/lib/soroban-submit";

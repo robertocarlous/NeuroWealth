@@ -2,8 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@/contexts";
-import { useWallet } from "@/contexts/WalletProvider";
+import { useAuth, useWallet } from "@/contexts";
 import { ensureBackendSession, backendUrl } from "@/lib/backend-auth";
 import { formatCurrency, formatApy, formatSignedCurrency, formatTimestamp } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
