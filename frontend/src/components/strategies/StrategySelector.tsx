@@ -131,8 +131,8 @@ function StrategyCardView({
 }: StrategyCardProps) {
   // Spec: selected state → border-2 primary + background tint
   const cardClass = isSelected
-    ? "border-2 border-sky-500 bg-sky-500/8 shadow-lg shadow-sky-500/10"
-    : "border border-white/10 bg-white/3 hover:border-white/20 hover:bg-white/5";
+    ? "border-2 border-sky-500 bg-sky-500/10 shadow-lg shadow-sky-500/10"
+    : "border border-white/10 bg-white/5 hover:border-white/50 hover:bg-white/5";
 
   return (
     <article
@@ -280,7 +280,7 @@ function ConfirmModal({
         </p>
 
         {/* Risk/APY summary */}
-        <div className="mb-5 rounded-xl border border-white/8 bg-white/3 p-4 space-y-2 text-sm">
+        <div className="mb-5 rounded-xl border border-white/10 bg-white/5 p-4 space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-slate-500">APY range</span>
             <span className="font-semibold text-slate-200 tabular-nums">
@@ -318,7 +318,7 @@ function ConfirmModal({
             type="button"
             onClick={onCancel}
             disabled={saving}
-            className="flex-1 rounded-lg border border-white/15 py-2.5 text-sm font-medium text-slate-400 hover:text-white hover:border-white/30 transition-colors disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
+            className="flex-1 rounded-lg border border-white/15 py-2.5 text-sm font-medium text-slate-400 hover:text-white hover:border-white/50 transition-colors disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
           >
             Cancel
           </button>
@@ -348,7 +348,7 @@ function ConfirmModal({
 
 function ComparisonTable({ current }: { current: StrategyKind | null }) {
   const highlight = (kind: StrategyKind) =>
-    kind === current ? "bg-sky-500/8 font-semibold text-slate-100" : "text-slate-400";
+    kind === current ? "bg-sky-500/10 font-semibold text-slate-100" : "text-slate-400";
 
   return (
     <section aria-label="Strategy comparison">
@@ -357,9 +357,9 @@ function ComparisonTable({ current }: { current: StrategyKind | null }) {
       </h2>
 
       {/* Spec: mobile horizontally scrollable; sticky header on desktop */}
-      <div className="overflow-x-auto rounded-xl border border-white/8">
+      <div className="overflow-x-auto rounded-xl border border-white/10">
         <table className="w-full min-w-[480px] text-sm border-collapse">
-          <thead className="sticky top-0 z-10 bg-slate-900 border-b border-white/8">
+          <thead className="sticky top-0 z-10 bg-slate-900 border-b border-white/10">
             <tr>
               <th
                 scope="col"
@@ -389,7 +389,7 @@ function ComparisonTable({ current }: { current: StrategyKind | null }) {
           </thead>
           <tbody className="divide-y divide-white/5">
             {COMPARISON_ROWS.map((row, i) => (
-              <tr key={row.feature} className={i % 2 === 1 ? "bg-white/2" : ""}>
+              <tr key={row.feature} className={i % 2 === 1 ? "bg-white/5" : ""}>
                 <td className="px-4 py-3 text-xs font-medium text-slate-500 whitespace-nowrap">
                   {row.feature}
                 </td>
@@ -438,7 +438,7 @@ function SkeletonCards() {
       {[0, 1, 2].map((i) => (
         <div
           key={i}
-          className="animate-pulse rounded-2xl border border-white/8 bg-white/3 p-6 space-y-4"
+          className="animate-pulse rounded-2xl border border-white/10 bg-white/5 p-6 space-y-4"
         >
           <span className="block h-11 w-11 rounded-xl bg-white/5" />
           <div className="space-y-2">
@@ -516,8 +516,7 @@ export function StrategySelector() {
   const { current, pending, saveStatus, errorMessage, loadingInitial } = state;
 
   return (
-    <main className="min-h-screen bg-dark-900 pt-24 pb-16">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-5xl py-6">
         {/* Page header */}
         <div className="mb-8">
           <p className="text-xs font-semibold uppercase tracking-widest text-sky-400 mb-1">
@@ -569,7 +568,6 @@ export function StrategySelector() {
             </Button>
           </Link>
         </div>
-      </div>
 
       {/* Confirmation modal */}
       {pending && (
@@ -582,6 +580,6 @@ export function StrategySelector() {
           onCancel={handleCancel}
         />
       )}
-    </main>
+    </div>
   );
 }

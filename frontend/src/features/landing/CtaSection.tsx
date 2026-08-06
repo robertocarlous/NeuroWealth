@@ -11,7 +11,7 @@ export function CtaSection() {
     <section className="relative overflow-hidden py-24">
       {/* Background glow */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-1/2 h-100 w-200 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/6 blur-[120px]" />
+        <div className="absolute left-1/2 top-1/2 h-100 w-200 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/5 blur-[120px]" />
       </div>
 
       <div className="relative mx-auto max-w-2xl px-6 text-center">
@@ -20,7 +20,7 @@ export function CtaSection() {
         </span>
 
         {/* Spec: 36px heading */}
-        <h2 className="mt-5 text-4xl font-bold leading-normal text-slate-50 md:text-5xl">
+        <h2 className="mt-5 text-4xl font-bold leading-[1.15] tracking-tight text-slate-50 md:text-5xl">
           {messages.cta.title}
         </h2>
 

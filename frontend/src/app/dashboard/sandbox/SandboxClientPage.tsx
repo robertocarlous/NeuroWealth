@@ -176,25 +176,25 @@ export default function SandboxClientPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <button
               onClick={() => setAllScenarios("success")}
-              className="rounded-lg border border-emerald-500/20 bg-emerald-500/8 px-4 py-2.5 text-xs font-medium text-emerald-400 hover:bg-emerald-500/15 transition-colors"
+              className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-4 py-2.5 text-xs font-medium text-emerald-400 hover:bg-emerald-500/15 transition-colors"
             >
               All Success
             </button>
             <button
               onClick={() => setAllScenarios("empty")}
-              className="rounded-lg border border-amber-500/20 bg-amber-500/8 px-4 py-2.5 text-xs font-medium text-amber-400 hover:bg-amber-500/15 transition-colors"
+              className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-2.5 text-xs font-medium text-amber-400 hover:bg-amber-500/15 transition-colors"
             >
               All Empty
             </button>
             <button
               onClick={() => setAllScenarios("loading")}
-              className="rounded-lg border border-sky-500/20 bg-sky-500/8 px-4 py-2.5 text-xs font-medium text-sky-400 hover:bg-sky-500/15 transition-colors"
+              className="rounded-lg border border-sky-500/20 bg-sky-500/10 px-4 py-2.5 text-xs font-medium text-sky-400 hover:bg-sky-500/15 transition-colors"
             >
               All Loading
             </button>
             <button
               onClick={() => setAllScenarios("partial-failure")}
-              className="rounded-lg border border-red-500/20 bg-red-500/8 px-4 py-2.5 text-xs font-medium text-red-400 hover:bg-red-500/15 transition-colors"
+              className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-2.5 text-xs font-medium text-red-400 hover:bg-red-500/15 transition-colors"
             >
               All Failure
             </button>

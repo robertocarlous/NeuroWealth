@@ -239,7 +239,7 @@ function SkeletonCards({ count }: { count: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="rounded-xl border border-white/5 bg-white/3 p-4 space-y-3 animate-pulse"
+          className="rounded-xl border border-white/5 bg-white/5 p-4 space-y-3 animate-pulse"
           aria-hidden
         >
           <div className="flex justify-between">
@@ -324,7 +324,7 @@ function Pagination({ page, totalPages, total, pageSize, onPage }: PaginationPro
           onClick={() => onPage(page - 1)}
           disabled={page <= 1}
           aria-label="Previous page"
-          className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-white/10 text-slate-400 hover:text-white hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
+          className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-white/10 text-slate-400 hover:text-white hover:border-white/50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
         >
           <ChevronLeft size={14} aria-hidden />
         </button>
@@ -339,7 +339,7 @@ function Pagination({ page, totalPages, total, pageSize, onPage }: PaginationPro
             className={`inline-flex items-center justify-center h-8 w-8 rounded-lg text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${
               n === page
                 ? "bg-sky-500 text-white font-semibold"
-                : "border border-white/10 text-slate-400 hover:text-white hover:border-white/20"
+                : "border border-white/10 text-slate-400 hover:text-white hover:border-white/50"
             }`}
           >
             {n}
@@ -351,7 +351,7 @@ function Pagination({ page, totalPages, total, pageSize, onPage }: PaginationPro
           onClick={() => onPage(page + 1)}
           disabled={page >= totalPages}
           aria-label="Next page"
-          className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-white/10 text-slate-400 hover:text-white hover:border-white/20 disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
+          className="inline-flex items-center justify-center h-8 w-8 rounded-lg border border-white/10 text-slate-400 hover:text-white hover:border-white/50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
         >
           <ChevronRight size={14} aria-hidden />
         </button>
@@ -391,7 +391,7 @@ function FilterBar({ filter, dispatch }: FilterBarProps) {
               className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${
                 filter.kind === chip.value
                   ? "bg-sky-500 border-sky-500 text-white"
-                  : "border-white/15 text-slate-400 hover:text-white hover:border-white/30 bg-transparent"
+                  : "border-white/15 text-slate-400 hover:text-white hover:border-white/50 bg-transparent"
               }`}
             >
               {chip.label}
@@ -415,7 +415,7 @@ function FilterBar({ filter, dispatch }: FilterBarProps) {
               className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 ${
                 filter.status === chip.value
                   ? "bg-sky-500 border-sky-500 text-white"
-                  : "border-white/15 text-slate-400 hover:text-white hover:border-white/30 bg-transparent"
+                  : "border-white/15 text-slate-400 hover:text-white hover:border-white/50 bg-transparent"
               }`}
             >
               {chip.label}
@@ -482,10 +482,10 @@ function DesktopTable({
 }) {
   return (
     /* Spec: table with sticky header */
-    <div className="hidden md:block overflow-hidden rounded-xl border border-white/8">
+    <div className="hidden md:block overflow-hidden rounded-xl border border-white/10">
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">
-          <thead className="sticky top-0 z-10 bg-slate-900 border-b border-white/8">
+          <thead className="sticky top-0 z-10 bg-slate-900 border-b border-white/10">
             <tr>
               <th
                 scope="col"
@@ -532,7 +532,7 @@ function DesktopTable({
               data.items.map((item) => (
                 <tr
                   key={item.id}
-                  className="hover:bg-white/3 transition-colors"
+                  className="hover:bg-white/5 transition-colors"
                 >
                   <td className="px-4 py-3">
                     <span className="inline-flex items-center gap-2 text-slate-300">
@@ -592,7 +592,7 @@ function MobileCards({
         data.items.map((item) => (
           <article
             key={item.id}
-            className="rounded-xl border border-white/8 bg-white/3 p-4 space-y-2.5"
+            className="rounded-xl border border-white/10 bg-white/5 p-4 space-y-2.5"
           >
             <div className="flex items-center justify-between gap-2">
               <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400">
@@ -703,7 +703,7 @@ export function TransactionHistory() {
         </div>
 
         {/* Filter bar */}
-        <div className="mb-6 rounded-xl border border-white/8 bg-white/3 p-4">
+        <div className="mb-6 rounded-xl border border-white/10 bg-white/5 p-4">
           <FilterBar filter={filter} dispatch={dispatchFilter} />
         </div>
 

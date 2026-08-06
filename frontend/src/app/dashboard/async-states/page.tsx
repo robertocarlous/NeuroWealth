@@ -84,7 +84,7 @@ function PortfolioStateDemo() {
       )}
 
       {state.status === "success" && state.data && (
-        <div className="rounded-xl border border-emerald-400/20 bg-emerald-500/8 px-4 py-3 text-sm text-emerald-300">
+        <div className="rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
           ✓ Loaded — balance{" "}
           <span className="font-mono font-semibold">
             ${state.data.summary.totalBalance.toLocaleString()}
@@ -238,7 +238,7 @@ function TransactionStateDemo() {
       )}
 
       {quoteState.state.status === "success" && quoteState.state.data && (
-        <div className="rounded-xl border border-sky-400/20 bg-sky-500/8 px-4 py-3 text-sm text-sky-300">
+        <div className="rounded-xl border border-sky-400/20 bg-sky-500/10 px-4 py-3 text-sm text-sky-300">
           Quote: <span className="font-mono font-semibold">{quoteState.state.data.quote.reference}</span>
           {" · "}net {quoteState.state.data.quote.netAmount} USDC · fee {quoteState.state.data.quote.fee} USDC
         </div>
@@ -253,7 +253,7 @@ function TransactionStateDemo() {
       )}
 
       {submitState.state.status === "success" && submitState.state.data && (
-        <div className="rounded-xl border border-emerald-400/20 bg-emerald-500/8 px-4 py-3 text-sm text-emerald-300">
+        <div className="rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
           Pending: <span className="font-mono font-semibold">{submitState.state.data.pending.reference}</span>
           {" · "}{submitState.state.data.pending.statusLabel}
         </div>

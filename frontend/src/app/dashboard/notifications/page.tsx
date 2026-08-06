@@ -173,7 +173,7 @@ function NotificationInbox() {
 
       {!simLoading && scenario === "partial-failure" && (
         <>
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/8 px-4 py-3 flex items-start gap-3">
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 flex items-start gap-3">
             <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" aria-hidden="true" />
             <p className="text-sm text-amber-300">Some notifications could not be loaded. Showing partial results.</p>
           </div>

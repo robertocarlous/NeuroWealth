@@ -90,7 +90,7 @@ export function EarningsDashboard() {
   const hasHistory = history.length > 0;
 
   return (
-    <div className="max-w-2xl mx-auto w-full space-y-6 p-4 md:p-6">
+    <div className="w-full space-y-6">
       <div>
         <Link
           href="/dashboard"
@@ -98,7 +98,7 @@ export function EarningsDashboard() {
         >
           ← Back to dashboard
         </Link>
-        <h1 className="text-2xl font-bold text-text-primary mt-2">Earnings</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-text-primary mt-2">Earnings</h1>
         <p className="text-sm text-text-secondary mt-1">
           Your balance, yield earned, and APY over time.
         </p>
@@ -110,7 +110,7 @@ export function EarningsDashboard() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
             <div className="card p-5">
               <p className="text-xs uppercase tracking-wide text-text-muted">Balance</p>
               <p className="text-2xl font-bold text-text-primary font-mono mt-1">
@@ -137,8 +137,9 @@ export function EarningsDashboard() {
             </div>
           </div>
 
-          <div className="card p-6">
-            <div className="flex items-center justify-between mb-4">
+          <div className="grid gap-6 lg:grid-cols-5">
+            <div className="card p-6 lg:col-span-3">
+              <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-semibold text-text-primary">Yield over time</h2>
               <div className="flex gap-1 rounded-lg border border-border p-1">
                 {(["7d", "30d", "90d"] as const).map((p) => (
@@ -206,10 +207,10 @@ export function EarningsDashboard() {
                 </ResponsiveContainer>
               </div>
             )}
-          </div>
+            </div>
 
-          <div className="card p-6">
-            <h2 className="text-sm font-semibold text-text-primary mb-4">Positions</h2>
+            <div className="card p-6 lg:col-span-2">
+              <h2 className="text-sm font-semibold text-text-primary mb-4">Positions</h2>
             {loading && !summary ? (
               <div className="space-y-3">
                 {[0, 1].map((i) => (
@@ -240,6 +241,7 @@ export function EarningsDashboard() {
                 ))}
               </ul>
             )}
+            </div>
           </div>
         </>
       )}

@@ -20,6 +20,7 @@
   --color-surface: #111827;
   --color-surface-border: #1F2937;
   --color-surface-elevated: #1F2937;
+  --color-border: #1F2937;
   --color-primary: #0EA5E9;
   --color-primary-hover: #0284C7;
   --color-text-primary: #F8FAFC;
@@ -116,6 +117,85 @@ textarea {
 html.theme-transitioning,
 html.theme-transitioning * {
   transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease !important;
+}
+
+/**
+ * Shared component classes — the single home for recurring surface/button
+ * patterns. Components may override layout (spacing, width, flex) at the call
+ * site via Tailwind utilities; these classes only set the "look".
+ *
+ * The bare `.card` / `.btn-primary` / `.btn-ghost` classes have been used
+ * across the app for a long time but were never defined — components relying
+ * on them rendered with no background, border, or shadow. Defined here so
+ * every call site is fixed at once.
+ */
+@layer components {
+  .card {
+    border-radius: 12px;
+    border: 1px solid var(--color-surface-border);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 8px;
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 10px 15px -3px rgb(14 165 233 / 0.2);
+    transition: background-color 180ms ease, transform 180ms ease;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+  .btn-primary:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+  .btn-primary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid rgb(14 165 233 / 0.6);
+    color: var(--color-primary);
+    font-weight: 500;
+    transition: background-color 180ms ease;
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: rgb(14 165 233 / 0.1);
+  }
+  .btn-secondary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 8px;
+    color: var(--color-text-secondary);
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+  .btn-ghost:hover:not(:disabled) {
+    color: var(--color-text-primary);
+    background: rgb(255 255 255 / 0.05);
+  }
+  .btn-ghost:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 }
 
 :where(.nav-link, .btn-ghost):focus-visible {

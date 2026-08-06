@@ -14,7 +14,7 @@ export function FeaturesSection() {
           {messages.features.badge}
         </span>
         {/* Spec: 30px heading */}
-        <h2 className="mt-4 text-3xl font-bold text-slate-50">
+        <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-50">
           {messages.features.title}
         </h2>
         <p className="mt-3 text-base text-slate-400">

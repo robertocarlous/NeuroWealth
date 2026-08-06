@@ -85,10 +85,10 @@ export function VaultDashboard() {
   );
 
   return (
-    <div className="max-w-2xl mx-auto w-full space-y-6 p-4 md:p-6">
+    <div className="w-full space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Your vault</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-text-primary">Your vault</h1>
           <p className="text-sm text-text-secondary mt-1">
             Deposit USDC and NeuroWealth&apos;s AI agent puts it to work across Stellar
             DeFi automatically.
@@ -111,95 +111,109 @@ export function VaultDashboard() {
         </div>
       ) : (
         <>
-          {/* Balance */}
-          <div className="card p-6 space-y-5">
-            {loading && !balance ? (
-              <div className="animate-pulse space-y-3">
-                <div className="h-3 w-24 rounded bg-surface" />
-                <div className="h-9 w-40 rounded bg-surface" />
-              </div>
-            ) : (
-              <div>
-                <p className="text-xs uppercase tracking-wide text-text-muted">
-                  Your balance
-                </p>
-                <p className="text-3xl font-bold text-text-primary font-mono mt-1">
-                  {formatCurrency(balance?.balance ?? 0)}
-                </p>
-              </div>
-            )}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Balance */}
+            <div className="card p-6 space-y-5">
+              {loading && !balance ? (
+                <div className="animate-pulse space-y-3">
+                  <div className="h-3 w-24 rounded bg-surface" />
+                  <div className="h-9 w-40 rounded bg-surface" />
+                </div>
+              ) : (
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-text-muted">
+                    Your balance
+                  </p>
+                  <p className="text-3xl font-bold text-text-primary font-mono mt-1">
+                    {formatCurrency(balance?.balance ?? 0)}
+                  </p>
+                  {vaultState && vaultState.activeProtocol !== "none" && (
+                    <p className="text-xs text-text-muted mt-2">
+                      Earning{" "}
+                      <span className="font-semibold text-success">
+                        {formatApy(vaultState.apy)} APY
+                      </span>{" "}
+                      in{" "}
+                      <span className="font-medium text-text-primary capitalize">
+                        {vaultState.activeProtocol}
+                      </span>
+                    </p>
+                  )}
+                </div>
+              )}
 
-            <div className="flex gap-3 pt-1">
-              <Link
-                href="/dashboard/transactions?kind=deposit"
-                className="btn-primary flex-1 text-center min-h-[44px] flex items-center justify-center"
-                data-qa="dashboard-deposit-button"
-              >
-                Deposit
-              </Link>
-              <Link
-                href="/dashboard/transactions?kind=withdrawal"
-                aria-disabled={!hasFunds}
-                data-qa="dashboard-withdraw-button"
-                className={cn(
-                  "flex-1 text-center min-h-[44px] flex items-center justify-center rounded-lg border border-border text-text-primary transition-colors",
-                  hasFunds
-                    ? "hover:bg-surface/80"
-                    : "opacity-50 pointer-events-none",
-                )}
-              >
-                Withdraw
-              </Link>
+              <div className="flex gap-3 pt-1">
+                <Link
+                  href="/dashboard/transactions?kind=deposit"
+                  className="btn-primary flex-1 text-center min-h-[44px] flex items-center justify-center"
+                  data-qa="dashboard-deposit-button"
+                >
+                  Deposit
+                </Link>
+                <Link
+                  href="/dashboard/transactions?kind=withdrawal"
+                  aria-disabled={!hasFunds}
+                  data-qa="dashboard-withdraw-button"
+                  className={cn(
+                    "flex-1 text-center min-h-[44px] flex items-center justify-center rounded-lg border border-border text-text-primary transition-colors",
+                    hasFunds
+                      ? "hover:bg-surface/80"
+                      : "opacity-50 pointer-events-none",
+                  )}
+                >
+                  Withdraw
+                </Link>
+              </div>
             </div>
-          </div>
 
-          {/* AI agent status — where your money actually is */}
-          <div className="card p-6 space-y-3" data-qa="agent-status-card">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-text-primary">
-                AI agent status
-              </h2>
-              <span
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
-                  isDeployed
-                    ? "bg-success/10 text-success"
-                    : "bg-surface text-text-muted border border-border",
-                )}
-              >
+            {/* AI agent status — where your money actually is */}
+            <div className="card p-6 space-y-3 sm:col-span-2 lg:col-span-2" data-qa="agent-status-card">
+              <div className="flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-text-primary">
+                  AI agent status
+                </h2>
                 <span
                   className={cn(
-                    "h-1.5 w-1.5 rounded-full",
-                    isDeployed ? "bg-success" : "bg-text-muted",
+                    "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+                    isDeployed
+                      ? "bg-success/10 text-success"
+                      : "bg-surface text-text-muted border border-border",
                   )}
-                />
-                {isDeployed ? "Active" : "Idle"}
-              </span>
-            </div>
+                >
+                  <span
+                    className={cn(
+                      "h-1.5 w-1.5 rounded-full",
+                      isDeployed ? "bg-success" : "bg-text-muted",
+                    )}
+                  />
+                  {isDeployed ? "Active" : "Idle"}
+                </span>
+              </div>
 
-            {loading && !vaultState ? (
-              <div className="h-4 w-64 rounded bg-surface animate-pulse" />
-            ) : isDeployed && vaultState ? (
-              <p className="text-sm text-text-secondary leading-relaxed">
-                Your funds are deployed in{" "}
-                <span className="font-medium text-text-primary capitalize">
-                  {vaultState.activeProtocol}
-                </span>
-                , currently earning{" "}
-                <span className="font-semibold text-success">
-                  {formatApy(vaultState.apy)} APY
-                </span>
-                . New deposits are deployed within seconds, and the agent
-                re-checks hourly afterward, moving your funds automatically
-                if a better opportunity appears — no action needed from you.
-              </p>
-            ) : (
-              <p className="text-sm text-text-secondary leading-relaxed">
-                {hasFunds
-                  ? "Your deposit is in the vault — the agent deploys idle funds into the best available protocol (e.g. Blend) within seconds of a deposit confirming on-chain. Refresh in a moment if this doesn't update right away."
-                  : "Nothing to deploy yet. As soon as you deposit, the agent picks up the funds and moves them into a yield strategy within seconds — you don't need to do anything else."}
-              </p>
-            )}
+              {loading && !vaultState ? (
+                <div className="h-4 w-64 rounded bg-surface animate-pulse" />
+              ) : isDeployed && vaultState ? (
+                <p className="text-sm text-text-secondary leading-relaxed max-w-2xl">
+                  Your funds are deployed in{" "}
+                  <span className="font-medium text-text-primary capitalize">
+                    {vaultState.activeProtocol}
+                  </span>
+                  , currently earning{" "}
+                  <span className="font-semibold text-success">
+                    {formatApy(vaultState.apy)} APY
+                  </span>
+                  . New deposits are deployed within seconds, and the agent
+                  re-checks hourly afterward, moving your funds automatically
+                  if a better opportunity appears — no action needed from you.
+                </p>
+              ) : (
+                <p className="text-sm text-text-secondary leading-relaxed max-w-2xl">
+                  {hasFunds
+                    ? "Your deposit is in the vault — the agent deploys idle funds into the best available protocol (e.g. Blend) within seconds of a deposit confirming on-chain. Refresh in a moment if this doesn't update right away."
+                    : "Nothing to deploy yet. As soon as you deposit, the agent picks up the funds and moves them into a yield strategy within seconds — you don't need to do anything else."}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Agent activity */}

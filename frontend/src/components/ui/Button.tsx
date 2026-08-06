@@ -11,13 +11,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-sky-500 hover:bg-sky-400 text-white font-semibold shadow-lg shadow-sky-500/20",
+    "bg-primary hover:bg-primary-hover text-white font-semibold shadow-lg shadow-sky-500/20",
   secondary:
-    "border border-sky-500/60 text-sky-400 hover:bg-sky-500/10 font-medium",
+    "border border-primary/60 text-primary hover:bg-primary/10 font-medium",
   ghost:
-    "text-slate-400 hover:text-slate-100 hover:bg-white/5 dark:text-slate-400 dark:hover:text-white",
+    "text-text-secondary hover:text-text-primary hover:bg-white/5",
   destructive:
-    "bg-red-500 hover:bg-red-400 text-white font-semibold shadow-lg shadow-red-500/20",
+    "bg-error hover:bg-red-400 text-white font-semibold shadow-lg shadow-red-500/20",
 };
 
 // Spec: radius 8px = rounded-lg for all sizes

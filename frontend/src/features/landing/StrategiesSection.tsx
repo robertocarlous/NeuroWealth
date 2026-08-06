@@ -11,10 +11,10 @@ export function StrategiesSection() {
     <section id="strategies" className="mx-auto max-w-6xl px-6 py-24">
       {/* Header */}
       <div className="mb-14 text-center">
-        <span className="inline-block rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
+        <span className="inline-block rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-xs font-medium text-sky-400">
           {messages.strategies.badge}
         </span>
-        <h2 className="mt-4 text-3xl font-bold text-slate-50">
+        <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-50">
           {messages.strategies.title}
         </h2>
         <p className="mt-3 text-base text-slate-400">

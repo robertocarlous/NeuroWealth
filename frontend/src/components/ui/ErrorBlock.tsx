@@ -32,7 +32,7 @@ export function ErrorBlock({
     <div
       role="alert"
       aria-live="assertive"
-      className={`flex flex-col items-center justify-center gap-4 rounded-2xl border border-red-400/20 bg-red-500/8 px-6 py-10 text-center ${className}`}
+      className={`flex flex-col items-center justify-center gap-4 rounded-2xl border border-red-400/20 bg-red-500/10 px-6 py-10 text-center ${className}`}
     >
       <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-500/10 text-red-400">
         <AlertCircle className="h-6 w-6" aria-hidden="true" />

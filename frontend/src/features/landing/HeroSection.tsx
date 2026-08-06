@@ -15,7 +15,7 @@ export function HeroSection() {
     >
       {/* Background glow — spec primary #0EA5E9 */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-1/3 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/8 blur-[140px]" />
+        <div className="absolute left-1/2 top-1/3 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/10 blur-[140px]" />
         <div className="absolute right-1/4 bottom-1/4 h-[300px] w-[300px] rounded-full bg-emerald-500/5 blur-[100px]" />
       </div>
 
@@ -25,10 +25,12 @@ export function HeroSection() {
           {messages.hero.badge}
         </span>
 
-        {/* Headline — spec: 36px / line-height 1.4–1.6 */}
-        <h1 className="mt-4 text-4xl font-bold leading-normal tracking-tight text-slate-50 sm:text-5xl md:text-6xl">
+        {/* Headline — spec: 36px / tight leading for display sizes */}
+        <h1 className="mt-4 text-4xl font-bold leading-[1.1] tracking-tight text-slate-50 sm:text-5xl md:text-6xl">
           {messages.hero.titleBeforeAccent}{" "}
-          <span className="text-sky-400">{messages.hero.titleAccent}</span>{" "}
+          <span className="bg-gradient-to-r from-sky-400 to-sky-300 bg-clip-text text-transparent">
+            {messages.hero.titleAccent}
+          </span>{" "}
           {messages.hero.titleAfterAccent}
         </h1>
 

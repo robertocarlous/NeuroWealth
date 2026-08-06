@@ -99,7 +99,7 @@ export function SecuritySection() {
         <span className="inline-block rounded-full border border-sky-500/30 bg-sky-500/10 px-3 py-1 text-xs font-medium text-sky-400">
           {messages.security.badge}
         </span>
-        <h2 className="mt-4 text-3xl font-bold text-slate-50">
+        <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-50">
           {messages.security.title}
         </h2>
         <p className="mt-3 text-base text-slate-400">
