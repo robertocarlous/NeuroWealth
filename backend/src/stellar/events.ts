@@ -679,7 +679,10 @@ export async function startEventListener(): Promise<void> {
     const latestLedger = await server.getLatestLedger();
     if (latestLedger.sequence > lastProcessedLedger + 1) {
       logger.info(`[Fault Recovery] Downtime detected. Backfilling missed events from ${lastProcessedLedger + 1} to ${latestLedger.sequence}`);
-      await backfillEvents(lastProcessedLedger + 1, latestLedger.sequence);
+      // Run in the background so a long-running (or failing) backfill never
+      // blocks the HTTP server from starting. The poll loop starts at the
+      // same ledger either way, so behaviour is unchanged — just non-blocking.
+      void backfillEvents(lastProcessedLedger + 1, latestLedger.sequence);
     }
   } catch (error) {
     logger.error('[Fault Recovery Error] Failed to perform backfill on startup:', error);
