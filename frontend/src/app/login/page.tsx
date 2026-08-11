@@ -6,13 +6,14 @@ import { useAuth, useWallet } from "@/contexts";
 import { MAIN_CONTENT_LANDMARK_ID } from "@/lib/app-landmarks";
 import { Zap } from "lucide-react";
 import WalletConnectButton from "@/components/WalletConnectButton";
+import GoogleSignInButton from "@/components/auth/GoogleSignInButton";
 
 export const dynamic = "force-dynamic";
 
 type SignInState = "idle" | "authenticating" | "error";
 
 function LoginContent() {
-  const { user, loading, signInWithWallet } = useAuth();
+  const { user, loading, signInWithWallet, signInWithGoogle } = useAuth();
   const { connected, publicKey } = useWallet();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -45,6 +46,23 @@ function LoginContent() {
       });
     },
     [signInWithWallet],
+  );
+
+  const attemptGoogleSignIn = useCallback(
+    (credential: string) => {
+      setState("authenticating");
+      setError(null);
+
+      signInWithGoogle(credential).catch((err) => {
+        setState("error");
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Google sign-in failed. Please try again.",
+        );
+      });
+    },
+    [signInWithGoogle],
   );
 
   // Once a wallet connects, run the real challenge/sign/verify handshake
@@ -82,7 +100,8 @@ function LoginContent() {
               Sign in to your account
             </h1>
             <p className="mt-1 text-sm text-text-secondary">
-              Connect your Stellar wallet — no email or password needed.
+              Continue with Google for a quick start, or connect your Stellar
+              wallet for full control of your funds.
             </p>
           </div>
 
@@ -94,7 +113,7 @@ function LoginContent() {
               className="rounded-lg bg-primary/10 border border-primary/20 px-4 py-3 text-sm text-primary flex items-center gap-2"
             >
               <Zap className="w-4 h-4 shrink-0 animate-pulse" aria-hidden="true" />
-              Verifying wallet signature…
+              Signing you in…
             </div>
           )}
 
@@ -106,7 +125,7 @@ function LoginContent() {
               className="rounded-lg bg-error/10 border border-error/20 px-4 py-3 text-sm text-error space-y-2"
             >
               <p>{error}</p>
-              {publicKey && (
+              {publicKey && !isAuthenticating && (
                 <button
                   type="button"
                   onClick={() => attemptSignIn(publicKey)}
@@ -118,11 +137,33 @@ function LoginContent() {
             </div>
           )}
 
-          <WalletConnectButton theme="dark" />
+          {/* Sign-in options */}
+          <div className="space-y-3">
+            <GoogleSignInButton
+              onCredential={attemptGoogleSignIn}
+              disabled={isAuthenticating}
+              onLoadError={(message) => setError(message)}
+            />
+
+            <div
+              className="flex items-center gap-3"
+              role="separator"
+              aria-label="or continue with your wallet"
+            >
+              <span className="h-px flex-1 bg-border" aria-hidden="true" />
+              <span className="text-xs text-text-muted">or</span>
+              <span className="h-px flex-1 bg-border" aria-hidden="true" />
+            </div>
+
+            <div className="flex justify-center">
+              <WalletConnectButton theme="dark" />
+            </div>
+          </div>
 
           <p className="text-center text-xs text-text-muted">
-            Your wallet signature proves ownership — no account, email, or password
-            required. New wallets are created automatically on first connect.
+            Your wallet signature proves ownership — new wallets are created
+            automatically on first connect. Google is a convenience sign-in;
+            connect a wallet later to deposit and withdraw.
           </p>
         </div>
       </div>

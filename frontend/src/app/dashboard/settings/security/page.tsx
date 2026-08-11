@@ -338,13 +338,13 @@ export default function SecurityPage() {
         .settings-title {
           font-size: 24px;
           font-weight: 700;
-          color: #e2e8f0;
+          color: var(--color-text-primary);
           margin: 0 0 4px;
         }
 
         .settings-subtitle {
           font-size: 14px;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           margin: 0;
         }
 
@@ -371,32 +371,33 @@ export default function SecurityPage() {
         }
 
         .settings-banner-success {
-          background: rgba(16, 185, 129, 0.08);
-          border-color: rgba(16, 185, 129, 0.3);
-          color: #6ee7b7;
+          background: color-mix(in srgb, var(--color-success) 10%, transparent);
+          border-color: color-mix(in srgb, var(--color-success) 30%, transparent);
+          color: var(--color-success);
         }
 
         .settings-banner-success svg {
-          color: #10b981;
+          color: var(--color-success);
           flex-shrink: 0;
         }
 
         .settings-banner-error {
-          background: rgba(239, 68, 68, 0.08);
-          border-color: rgba(239, 68, 68, 0.3);
-          color: #fca5a5;
+          background: color-mix(in srgb, var(--color-error) 10%, transparent);
+          border-color: color-mix(in srgb, var(--color-error) 30%, transparent);
+          color: var(--color-error);
         }
 
         .settings-banner-error svg {
-          color: #ef4444;
+          color: var(--color-error);
           flex-shrink: 0;
         }
 
         .settings-card {
-          background: rgba(15, 23, 42, 0.6);
-          border: 1px solid rgba(148, 163, 184, 0.15);
+          background: var(--color-surface);
+          border: 1px solid var(--color-surface-border);
           border-radius: 14px;
           overflow: hidden;
+          box-shadow: var(--shadow-card);
         }
 
         .settings-card-header {
@@ -404,32 +405,32 @@ export default function SecurityPage() {
           align-items: flex-start;
           gap: 12px;
           padding: 20px 24px 16px;
-          border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+          border-bottom: 1px solid var(--color-surface-border);
         }
 
         .settings-card-icon {
           width: 34px;
           height: 34px;
           border-radius: 8px;
-          background: rgba(56, 189, 248, 0.1);
-          border: 1px solid rgba(56, 189, 248, 0.2);
+          background: var(--color-primary);
+          border: 1px solid var(--color-primary-hover);
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #38bdf8;
+          color: var(--color-text-primary);
           flex-shrink: 0;
         }
 
         .settings-card-title {
           font-size: 14px;
           font-weight: 600;
-          color: #e2e8f0;
+          color: var(--color-text-primary);
           margin: 0 0 2px;
         }
 
         .settings-card-desc {
           font-size: 12px;
-          color: #64748b;
+          color: var(--color-text-muted);
           margin: 0;
         }
 
@@ -449,14 +450,14 @@ export default function SecurityPage() {
         .settings-label {
           font-size: 12px;
           font-weight: 600;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
 
         .settings-value {
           font-size: 14px;
-          color: #e2e8f0;
+          color: var(--color-text-primary);
           margin: 0;
           padding: 9px 0;
         }
@@ -466,11 +467,11 @@ export default function SecurityPage() {
           align-items: center;
           gap: 8px;
           font-size: 12px;
-          color: #f59e0b;
+          color: var(--color-warning);
           margin: 8px 0 0;
           padding: 8px 12px;
-          background: rgba(245, 158, 11, 0.08);
-          border: 1px solid rgba(245, 158, 11, 0.2);
+          background: color-mix(in srgb, var(--color-warning) 10%, transparent);
+          border: 1px solid color-mix(in srgb, var(--color-warning) 30%, transparent);
           border-radius: 6px;
         }
 
@@ -479,7 +480,7 @@ export default function SecurityPage() {
           align-items: center;
           gap: 10px;
           font-size: 14px;
-          color: #e2e8f0;
+          color: var(--color-text-primary);
           cursor: pointer;
         }
 
@@ -487,7 +488,7 @@ export default function SecurityPage() {
           width: 18px;
           height: 18px;
           cursor: pointer;
-          accent-color: #38bdf8;
+          accent-color: var(--color-primary);
         }
 
         .settings-toggle:disabled {
@@ -497,7 +498,7 @@ export default function SecurityPage() {
 
         .settings-hint {
           font-size: 12px;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           margin: 4px 0 0;
         }
 
@@ -509,9 +510,9 @@ export default function SecurityPage() {
           padding: 14px 20px;
           /* #423: add safe-area-inset-bottom so buttons clear the home indicator */
           padding-bottom: max(14px, calc(14px + var(--sai-bottom, 0px)));
-          background: rgba(2, 6, 23, 0.88);
+          background: var(--color-app-bg);
           backdrop-filter: blur(16px);
-          border: 1px solid rgba(148, 163, 184, 0.15);
+          border: 1px solid var(--color-surface-border);
           border-radius: 12px;
           position: sticky;
           bottom: 24px;
@@ -521,7 +522,7 @@ export default function SecurityPage() {
 
         .settings-dirty-indicator {
           font-size: 12px;
-          color: #f59e0b;
+          color: var(--color-warning);
         }
 
         .settings-actions {
@@ -559,8 +560,8 @@ export default function SecurityPage() {
         }
 
         .modal-content {
-          background: rgba(15, 23, 42, 0.95);
-          border: 1px solid rgba(148, 163, 184, 0.2);
+          background: var(--color-surface);
+          border: 1px solid var(--color-surface-border);
           border-radius: 14px;
           width: 100%;
           max-width: 400px;
@@ -584,27 +585,27 @@ export default function SecurityPage() {
           align-items: center;
           justify-content: space-between;
           padding: 20px 24px;
-          border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+          border-bottom: 1px solid var(--color-surface-border);
         }
 
         .modal-title {
           font-size: 16px;
           font-weight: 600;
-          color: #e2e8f0;
+          color: var(--color-text-primary);
           margin: 0;
         }
 
         .modal-close {
           background: transparent;
           border: none;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           font-size: 20px;
           cursor: pointer;
           transition: color 0.2s;
         }
 
         .modal-close:hover {
-          color: #e2e8f0;
+          color: var(--color-text-primary);
         }
 
         .modal-body {
@@ -620,33 +621,33 @@ export default function SecurityPage() {
         .modal-label {
           font-size: 12px;
           font-weight: 600;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }
 
         .modal-input {
-          background: rgba(15, 23, 42, 0.8);
-          border: 1px solid rgba(148, 163, 184, 0.2);
+          background: var(--color-app-bg);
+          border: 1px solid var(--color-surface-border);
           border-radius: 8px;
           padding: 10px 14px;
           min-height: 44px;
-          color: #e2e8f0;
+          color: var(--color-text-primary);
           font-size: 14px;
           outline: none;
           transition: all 0.2s;
         }
 
         .modal-input:focus {
-          border-color: #38bdf8;
-          box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+          border-color: var(--color-primary);
+          box-shadow: 0 0 0 3px var(--color-primary);
         }
 
         .modal-footer {
           display: flex;
           gap: 10px;
           padding: 16px 24px;
-          border-top: 1px solid rgba(148, 163, 184, 0.1);
+          border-top: 1px solid var(--color-surface-border);
           justify-content: flex-end;
         }
 

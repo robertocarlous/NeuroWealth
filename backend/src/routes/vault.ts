@@ -53,6 +53,15 @@ router.get('/balance', requireAuth, async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'User not found' })
   }
 
+  // Google-only accounts have no linked wallet yet — nothing on-chain to query.
+  if (!user.walletAddress) {
+    return res.status(200).json({
+      balance: 0,
+      shares: 0,
+      walletRequired: true,
+    })
+  }
+
   const onChain = await getOnChainBalance(user.walletAddress)
 
   return res.status(200).json({
@@ -79,6 +88,10 @@ router.post('/build-transaction', requireAuth, async (req: Request, res: Respons
   }
 
   const walletAddress = req.auth!.walletAddress
+
+  if (!walletAddress) {
+    return res.status(400).json({ error: 'Connect a Stellar wallet before making transactions' })
+  }
 
   const unsignedXdr = await buildUnsignedVaultTransaction(
     parsed.data.type,

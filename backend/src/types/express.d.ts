@@ -5,11 +5,11 @@ declare global {
     interface Request {
       correlationId?: string
       userId?: string
-      stellarPubKey?: string
+      stellarPubKey?: string | null
       auth?: {
         userId: string
         sessionId: string
-        walletAddress: string
+        walletAddress: string | null
         network: Network
       }
     }

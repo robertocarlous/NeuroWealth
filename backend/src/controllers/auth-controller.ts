@@ -5,6 +5,35 @@ import { JwtAdapter, config } from '../config';
 import { logger } from '../utils/logger';
 import db from '../db';
 import { stellarVerification } from '../utils/stellar/stellar-verification';
+import { verifyGoogleIdToken } from '../utils/auth/google-verification';
+
+/** Shared helper: issue a JWT + persist a session row for an authenticated user. */
+async function issueSession(
+  user: { id: string },
+  req: Request,
+  sessionData: { walletAddress: string | null },
+): Promise<{ token: string; expiresAt: Date }> {
+  const expiresAt = new Date(Date.now() + config.jwt.session_ttl_hours * 60 * 60 * 1000);
+  const token = await JwtAdapter.generateToken({ id: user.id }, config.jwt.session_ttl_hours);
+
+  if (!token) {
+    throw new Error('Failed to generate token');
+  }
+
+  await db.session.create({
+    data: {
+      userId: user.id,
+      token,
+      walletAddress: sessionData.walletAddress,
+      network: stellarVerification.resolveNetwork(),
+      expiresAt,
+      ipAddress: req.ip ?? null,
+      userAgent: req.headers['user-agent'] ?? null,
+    },
+  });
+
+  return { token, expiresAt };
+}
 
 // Controllers
 
@@ -123,27 +152,12 @@ export async function verify(req: Request, res: Response): Promise<void> {
       logger.info(`[Auth] New user created: ${user.id} (${stellarPubKey})`);
     }
 
-    // 6. Issue JWT
-    const expiresAt = new Date(Date.now() + config.jwt.session_ttl_hours * 60 * 60 * 1000);
-    const token = await JwtAdapter.generateToken({ id: user.id }, config.jwt.session_ttl_hours);
-
-    if (!token) {
-      res.status(500).json({ error: 'Failed to generate token' });
-      return;
-    }
-
-    // 7. Persist session
-    await db.session.create({
-      data: {
-        userId: user.id,
-        token,
-        walletAddress: stellarPubKey,
-        network,
-        expiresAt,
-        ipAddress: req.ip ?? null,
-        userAgent: req.headers['user-agent'] ?? null,
-      },
-    });
+    // 6. Issue JWT + session
+    const { token, expiresAt } = await issueSession(
+      user,
+      req,
+      { walletAddress: stellarPubKey },
+    );
 
     logger.info(`[Auth] Session created for user ${user.id}`);
 
@@ -154,6 +168,92 @@ export async function verify(req: Request, res: Response): Promise<void> {
     });
   } catch (error) {
     logger.error('[Auth] Verify error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+/**
+ * POST /api/auth/google
+ *
+ * Body: { credential: string }  — a Google Identity Services ID token (JWT)
+ * Returns: { token: string, userId: string, expiresAt: ISO-8601 }
+ *
+ * Steps:
+ *  1. Verify the Google ID token signature + audience with google-auth-library.
+ *  2. Find the user by googleId, else by verified email; create if neither exists.
+ *  3. Link the googleId to the account so future sign-ins are stable.
+ *  4. Issue JWT and store session in DB (no wallet attached until one is linked).
+ *
+ * Requires GOOGLE_CLIENT_ID to be configured on the backend; otherwise 503.
+ */
+export async function googleSignIn(req: Request, res: Response): Promise<void> {
+  const { credential } = req.body as { credential: string };
+
+  if (!config.google.clientId) {
+    res.status(503).json({ error: 'Google sign-in is not configured on this server' });
+    return;
+  }
+
+  // 1. Verify the ID token (signature + audience + issuer)
+  const profile = await verifyGoogleIdToken(credential);
+  if (!profile) {
+    res.status(401).json({ error: 'Invalid Google credential' });
+    return;
+  }
+
+  try {
+    // 2. Find by googleId first, then by verified email (account linking)
+    let user = await db.user.findUnique({ where: { googleId: profile.googleId } });
+
+    if (!user && profile.email) {
+      user = await db.user.findUnique({ where: { email: profile.email } });
+    }
+
+    // 3. Create or link
+    if (!user) {
+      user = await db.user.create({
+        data: {
+          googleId: profile.googleId,
+          email: profile.email ?? undefined,
+          displayName: profile.name ?? undefined,
+          avatarUrl: profile.picture ?? undefined,
+          positions: {
+            create: {
+              protocolName: 'unassigned',
+              assetSymbol: 'USDC',
+              depositedAmount: 0,
+              currentValue: 0,
+            },
+          },
+        },
+      });
+      logger.info(`[Auth] New Google user created: ${user.id} (${profile.googleId})`);
+    } else if (!user.googleId) {
+      user = await db.user.update({
+        where: { id: user.id },
+        data: { googleId: profile.googleId },
+      });
+      logger.info(`[Auth] Linked Google identity to existing user ${user.id}`);
+    }
+
+    // 4. Issue JWT + session (wallet-linked later — Google is the primary identity)
+    const { token, expiresAt } = await issueSession(user, req, { walletAddress: null });
+
+    logger.info(`[Auth] Google session created for user ${user.id}`);
+
+    res.status(200).json({
+      token,
+      userId: user.id,
+      expiresAt: expiresAt.toISOString(),
+      // Profile fields so the frontend can build a rich session without
+      // re-decoding the Google ID token client-side.
+      email: user.email ?? null,
+      displayName: user.displayName ?? null,
+      avatarUrl: user.avatarUrl ?? null,
+      walletAddress: user.walletAddress ?? null,
+    });
+  } catch (error) {
+    logger.error('[Auth] Google sign-in error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }

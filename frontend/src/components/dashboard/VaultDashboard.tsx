@@ -6,6 +6,7 @@ import { useAuth, useWallet } from "@/contexts";
 import { ensureBackendSession, backendUrl } from "@/lib/backend-auth";
 import { formatCurrency, formatApy, formatSignedCurrency, formatTimestamp } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
+import { YieldVisibility } from "./YieldVisibility";
 
 interface VaultState {
   apy: number;
@@ -215,6 +216,13 @@ export function VaultDashboard() {
               )}
             </div>
           </div>
+
+          {/* Yield visibility — why the agent picks what it picks */}
+          <YieldVisibility
+            connected={connected}
+            activeProtocol={vaultState?.activeProtocol ?? "none"}
+            activeApy={vaultState?.apy ?? 0}
+          />
 
           {/* Agent activity */}
           <div className="card p-6">

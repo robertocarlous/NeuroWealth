@@ -61,6 +61,37 @@ describe('Zod validation on public routes', () => {
     })
   })
 
+  describe('POST /api/auth/google', () => {
+    it('returns 400 when credential is missing', async () => {
+      const res = await request(app).post('/api/auth/google').send({})
+      expect(res.status).toBe(400)
+      expect(res.body.error).toBeDefined()
+      expect(res.body.details).toBeDefined()
+    })
+
+    it('returns 400 when credential is empty string', async () => {
+      const res = await request(app)
+        .post('/api/auth/google')
+        .send({ credential: '' })
+      expect(res.status).toBe(400)
+      expect(res.body.details).toBeDefined()
+    })
+
+    it('returns 503 when Google sign-in is not configured', async () => {
+      // Test env has no GOOGLE_CLIENT_ID → the route is explicitly disabled.
+      const res = await request(app)
+        .post('/api/auth/google')
+        .send({ credential: 'some.jwt.token' })
+      if (process.env.GOOGLE_CLIENT_ID) {
+        // Configured envs are exercised by the unit test with a mocked verifier.
+        expect([400, 401]).toContain(res.status)
+      } else {
+        expect(res.status).toBe(503)
+        expect(res.body.error).toContain('not configured')
+      }
+    })
+  })
+
   describe('POST /api/whatsapp/webhook', () => {
     it('returns 400 when From is missing', async () => {
       const res = await request(app)

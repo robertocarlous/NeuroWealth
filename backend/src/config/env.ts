@@ -247,6 +247,12 @@ export const config = {
     anthropicApiKey: requireEnv('ANTHROPIC_API_KEY'),
     brianApiKey: process.env.BRIAN_API_KEY || '',
   },
+  google: {
+    // Google OAuth client ID used to verify Sign-In-With-Google ID tokens.
+    // Optional — when unset, the Google sign-in route returns 503 (not configured)
+    // so the rest of the auth stack keeps working for wallet-only setups.
+    clientId: process.env.GOOGLE_CLIENT_ID || '',
+  },
   database: {
     url: requireEnv('DATABASE_URL'),
   },

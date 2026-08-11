@@ -16,6 +16,10 @@ export async function processOnChainTransaction(
     return sendUnauthorized(res)
   }
 
+  if (!req.auth.walletAddress) {
+    return sendConflict(res, 'Connect a Stellar wallet before making transactions')
+  }
+
   const user = await db.user.findUnique({
     where: { id: userId },
     select: { id: true, network: true },

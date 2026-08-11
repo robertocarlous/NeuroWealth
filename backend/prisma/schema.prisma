@@ -57,7 +57,12 @@ enum DeadLetterEventStatus {
 
 model User {
   id            String   @id @default(uuid())
-  walletAddress String   @unique
+  // Wallet identity (Sign-In-With-Stellar). Nullable so users can sign in with
+  // Google first and link a wallet later.
+  walletAddress String?  @unique
+  // Google identity (Sign-In-With-Google). Nullable — wallet-first users have no
+  // Google account until they choose to link one.
+  googleId      String?  @unique
   network       Network  @default(MAINNET)
   displayName   String?
   email         String?  @unique
@@ -79,7 +84,8 @@ model Session {
   id            String   @id @default(uuid())
   userId        String
   token         String   @unique
-  walletAddress String
+  // Wallet used for this session — null for Google-only sessions until a wallet is linked.
+  walletAddress String?
   network       Network
   expiresAt     DateTime
   ipAddress     String?

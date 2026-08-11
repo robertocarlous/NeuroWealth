@@ -1,8 +1,12 @@
 import { Router } from 'express';
-import { challenge, verify, logout } from '../controllers/auth-controller';
+import { challenge, verify, googleSignIn, logout } from '../controllers/auth-controller';
 import { requireAuth } from '../middleware/authenticate';
 import { validate } from '../middleware/validate';
-import { authChallengeSchema, authVerifySchema } from '../validators/auth-validators';
+import {
+  authChallengeSchema,
+  authVerifySchema,
+  authGoogleSchema,
+} from '../validators/auth-validators';
 
 const router = Router();
 
@@ -17,6 +21,12 @@ router.post('/challenge', validate({ body: authChallengeSchema }), challenge);
  * Verifies Stellar signature, creates/fetches user, issues JWT.
  */
 router.post('/verify', validate({ body: authVerifySchema }), verify);
+
+/**
+ * POST /api/auth/google
+ * Verifies a Google ID token, creates/fetches user, issues JWT.
+ */
+router.post('/google', validate({ body: authGoogleSchema }), googleSignIn);
 
 /**
  * POST /api/auth/logout

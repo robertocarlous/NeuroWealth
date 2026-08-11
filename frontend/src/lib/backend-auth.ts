@@ -34,6 +34,13 @@ interface VerifyResponse {
   expiresAt: string;
 }
 
+interface GoogleVerifyResponse extends VerifyResponse {
+  email: string | null;
+  displayName: string | null;
+  avatarUrl: string | null;
+  walletAddress: string | null;
+}
+
 /** Extracts the backend's `{ error: "..." }` body, falling back to the status code. */
 async function readErrorMessage(res: Response, fallback: string): Promise<string> {
   try {
@@ -77,6 +84,27 @@ export async function loginWithWallet(publicKey: string): Promise<VerifyResponse
   const { nonce } = await requestChallenge(publicKey);
   const signature = await signMessage({ message: nonce, address: publicKey });
   const result = await verifySignature(publicKey, signature);
+  if (typeof window !== "undefined") {
+    window.sessionStorage.setItem(TOKEN_STORAGE_KEY, result.token);
+  }
+  return result;
+}
+
+/**
+ * Sign in with Google: exchanges a Google Identity Services ID token (JWT) for
+ * a NeuroWealth session. Returns the same shape as the wallet flow so callers
+ * can persist it identically.
+ */
+export async function loginWithGoogle(credential: string): Promise<GoogleVerifyResponse> {
+  const res = await fetch(`${backendUrl()}/api/auth/google`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ credential }),
+  });
+  if (!res.ok) {
+    throw new Error(await readErrorMessage(res, "Google sign-in failed"));
+  }
+  const result: GoogleVerifyResponse = await res.json();
   if (typeof window !== "undefined") {
     window.sessionStorage.setItem(TOKEN_STORAGE_KEY, result.token);
   }

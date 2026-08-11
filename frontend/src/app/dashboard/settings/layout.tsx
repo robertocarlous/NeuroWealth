@@ -57,16 +57,21 @@ export default function SettingsLayout({
           display: flex;
           flex-direction: column;
           gap: 16px;
+          background: var(--color-surface);
+          border: 1px solid var(--color-surface-border);
+          border-radius: 14px;
+          padding: 16px;
+          box-shadow: var(--shadow-card);
         }
 
         .settings-nav-title {
-          font-size: 14px;
+          font-size: 12px;
           font-weight: 600;
-          color: #94a3b8;
+          color: var(--color-text-muted);
           text-transform: uppercase;
           letter-spacing: 0.05em;
           margin: 0;
-          padding: 0 12px;
+          padding: 0 8px;
         }
 
         .settings-nav-list {
@@ -81,23 +86,24 @@ export default function SettingsLayout({
         .settings-nav-link {
           display: block;
           padding: 10px 12px;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           text-decoration: none;
           font-size: 14px;
+          font-weight: 500;
           border-radius: 8px;
           transition: all 0.2s;
-          border-left: 2px solid transparent;
+          border-left: 3px solid transparent;
         }
 
         .settings-nav-link:hover {
-          color: #e2e8f0;
-          background: rgba(56, 189, 248, 0.08);
+          color: var(--color-text-primary);
+          background: var(--color-primary);
         }
 
         .settings-nav-link.active {
-          color: #38bdf8;
-          background: rgba(56, 189, 248, 0.12);
-          border-left-color: #38bdf8;
+          color: var(--color-primary);
+          background: var(--color-primary);
+          border-left-color: var(--color-primary);
         }
 
         .settings-main {
@@ -122,6 +128,7 @@ export default function SettingsLayout({
             gap: 8px;
             overflow-x: auto;
             padding-bottom: 8px;
+            border-radius: 12px;
           }
 
           .settings-nav-title {

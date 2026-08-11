@@ -10,7 +10,7 @@ import React, {
 import type { AuthSession } from "@/lib/auth-adapter";
 import { getAuthAdapter } from "@/lib/auth-provider-factory";
 import { analytics } from "@/lib/analytics";
-import { loginWithWallet } from "@/lib/backend-auth";
+import { loginWithWallet, loginWithGoogle } from "@/lib/backend-auth";
 import { adaptApiUser } from "@/lib/user";
 
 import { useRouter } from "next/navigation";
@@ -27,6 +27,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, name: string, password: string) => Promise<void>;
   signInWithWallet: (publicKey: string) => Promise<void>;
+  signInWithGoogle: (credential: string) => Promise<void>;
   signOut: () => void;
 }
 
@@ -155,6 +156,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  /**
+   * Sign in with Google: exchanges a Google Identity Services ID token for a
+   * backend session (see lib/backend-auth.ts), then persists it the same way
+   * the wallet flow does. Google is a convenience identity — a Stellar wallet
+   * can be linked later for on-chain transactions.
+   */
+  const signInWithGoogle = useCallback(async (credential: string) => {
+    setLoading(true);
+    try {
+      const result = await loginWithGoogle(credential);
+      const sessionUser = adaptApiUser({
+        id: result.userId,
+        email: result.email ?? undefined,
+        displayName: result.displayName ?? undefined,
+        avatarUrl: result.avatarUrl ?? undefined,
+        walletAddress: result.walletAddress ?? undefined,
+      });
+      const session: AuthSession = {
+        user: sessionUser,
+        token: result.token,
+        expiresAt: new Date(result.expiresAt).getTime(),
+      };
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+      }
+      setUser(session.user);
+      setSessionCookie(session);
+      analytics.track("auth_sign_in", { userId: session.user.id, method: "google" });
+    } catch (err) {
+      analytics.track("auth_sign_in_failed", { method: "google" });
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const signOut = useCallback(() => {
     analytics.track("auth_sign_out", { userId: user?.id });
     authAdapter.signOut();
@@ -165,7 +202,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signIn, signUp, signInWithWallet, signOut }}
+      value={{ user, loading, signIn, signUp, signInWithWallet, signInWithGoogle, signOut }}
     >
       {children}
     </AuthContext.Provider>

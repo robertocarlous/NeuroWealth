@@ -294,13 +294,13 @@ export function AuditTrail() {
         .audit-title {
           font-size: 28px;
           font-weight: 700;
-          color: #e2e8f0;
+          color: var(--color-text-primary);
           margin: 0 0 4px;
         }
 
         .audit-subtitle {
           font-size: 14px;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           margin: 0;
         }
 
@@ -323,23 +323,23 @@ export function AuditTrail() {
           align-items: center;
           gap: 8px;
           padding: 8px 12px;
-          background: rgba(15, 23, 42, 0.6);
-          border: 1px solid rgba(148, 163, 184, 0.2);
+          background: var(--color-surface);
+          border: 1px solid var(--color-surface-border);
           border-radius: 8px;
         }
 
         .audit-select {
           background: transparent;
           border: none;
-          color: #e2e8f0;
+          color: var(--color-text-primary);
           font-size: 14px;
           cursor: pointer;
           outline: none;
         }
 
         .audit-select option {
-          background: #0f172a;
-          color: #e2e8f0;
+          background: var(--color-surface);
+          color: var(--color-text-primary);
         }
 
         .audit-sort-btn {
@@ -348,14 +348,14 @@ export function AuditTrail() {
           gap: 6px;
           background: transparent;
           border: none;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           font-size: 14px;
           cursor: pointer;
           transition: color 0.2s;
         }
 
         .audit-sort-btn:hover {
-          color: #e2e8f0;
+          color: var(--color-text-primary);
         }
 
         .audit-sort-btn svg {
@@ -366,9 +366,9 @@ export function AuditTrail() {
         .audit-table-wrapper {
           display: none;
           overflow-x: auto;
-          border: 1px solid rgba(148, 163, 184, 0.1);
+          border: 1px solid var(--color-surface-border);
           border-radius: 12px;
-          background: rgba(15, 23, 42, 0.5);
+          background: var(--color-surface);
         }
 
         .audit-table {
@@ -378,15 +378,15 @@ export function AuditTrail() {
         }
 
         .audit-table thead {
-          background: rgba(15, 23, 42, 0.8);
-          border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+          background: var(--color-app-bg);
+          border-bottom: 1px solid var(--color-surface-border);
         }
 
         .audit-table th {
           padding: 12px 16px;
           text-align: left;
           font-weight: 600;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           text-transform: uppercase;
           font-size: 12px;
           letter-spacing: 0.05em;
@@ -394,24 +394,24 @@ export function AuditTrail() {
 
         .audit-table td {
           padding: 14px 16px;
-          border-bottom: 1px solid rgba(148, 163, 184, 0.08);
-          color: #cbd5e1;
+          border-bottom: 1px solid var(--color-surface-border);
+          color: var(--color-text-secondary);
         }
 
         .audit-row:hover {
-          background: rgba(56, 189, 248, 0.05);
+          background: color-mix(in srgb, var(--color-primary) 6%, transparent);
         }
 
         .audit-timestamp {
           font-family: "Monaco", "Courier New", monospace;
           font-size: 13px;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
         }
 
         .audit-ip {
           font-family: "Monaco", "Courier New", monospace;
           font-size: 12px;
-          color: #64748b;
+          color: var(--color-text-muted);
         }
 
         .audit-badge {
@@ -427,7 +427,7 @@ export function AuditTrail() {
         .audit-expand-btn {
           background: transparent;
           border: none;
-          color: #38bdf8;
+          color: var(--color-primary);
           font-size: 12px;
           font-weight: 600;
           cursor: pointer;
@@ -435,13 +435,13 @@ export function AuditTrail() {
         }
 
         .audit-expand-btn:hover {
-          color: #0ea5e9;
+          color: var(--color-primary);
         }
 
         .audit-empty {
           text-align: center;
           padding: 32px 16px;
-          color: #64748b;
+          color: var(--color-text-muted);
         }
 
         /* Mobile Cards */
@@ -452,8 +452,8 @@ export function AuditTrail() {
         }
 
         .audit-card {
-          background: rgba(15, 23, 42, 0.6);
-          border: 1px solid rgba(148, 163, 184, 0.15);
+          background: var(--color-surface);
+          border: 1px solid var(--color-surface-border);
           border-radius: 12px;
           overflow: hidden;
         }
@@ -463,14 +463,14 @@ export function AuditTrail() {
           align-items: center;
           justify-content: space-between;
           padding: 12px 16px;
-          background: rgba(15, 23, 42, 0.8);
-          border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+          background: var(--color-app-bg);
+          border-bottom: 1px solid var(--color-surface-border);
         }
 
         .audit-card-toggle {
           background: transparent;
           border: none;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           cursor: pointer;
           display: flex;
           align-items: center;
@@ -478,7 +478,7 @@ export function AuditTrail() {
         }
 
         .audit-card-toggle:hover {
-          color: #e2e8f0;
+          color: var(--color-text-primary);
         }
 
         .audit-card-body {
@@ -496,20 +496,20 @@ export function AuditTrail() {
         }
 
         .audit-card-label {
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           font-weight: 500;
         }
 
         .audit-card-value {
-          color: #cbd5e1;
+          color: var(--color-text-secondary);
           text-align: right;
           word-break: break-word;
         }
 
         .audit-card-details {
           padding: 12px 16px;
-          border-top: 1px solid rgba(148, 163, 184, 0.1);
-          background: rgba(56, 189, 248, 0.05);
+          border-top: 1px solid var(--color-surface-border);
+          background: color-mix(in srgb, var(--color-primary) 6%, transparent);
         }
 
         .audit-metadata {
@@ -521,7 +521,7 @@ export function AuditTrail() {
         .audit-metadata-label {
           font-size: 12px;
           font-weight: 600;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           text-transform: uppercase;
           margin: 0;
         }
@@ -529,11 +529,11 @@ export function AuditTrail() {
         .audit-metadata-content {
           margin: 0;
           padding: 8px 12px;
-          background: rgba(15, 23, 42, 0.8);
-          border: 1px solid rgba(148, 163, 184, 0.1);
+          background: var(--color-app-bg);
+          border: 1px solid var(--color-surface-border);
           border-radius: 6px;
           font-size: 11px;
-          color: #cbd5e1;
+          color: var(--color-text-secondary);
           font-family: "Monaco", "Courier New", monospace;
           overflow-x: auto;
           max-height: 200px;
@@ -543,7 +543,7 @@ export function AuditTrail() {
         .audit-empty-mobile {
           text-align: center;
           padding: 32px 16px;
-          color: #64748b;
+          color: var(--color-text-muted);
           font-size: 14px;
         }
 
@@ -558,11 +558,11 @@ export function AuditTrail() {
 
         .audit-page-info {
           font-size: 13px;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
         }
 
         .audit-page-total {
-          color: #e2e8f0;
+          color: var(--color-text-primary);
         }
 
         .audit-page-buttons {
@@ -572,10 +572,10 @@ export function AuditTrail() {
         }
 
         .audit-page-btn {
-          background: rgba(15, 23, 42, 0.6);
-          border: 1px solid rgba(148, 163, 184, 0.2);
+          background: var(--color-surface);
+          border: 1px solid var(--color-surface-border);
           border-radius: 8px;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           width: 36px;
           height: 36px;
           font-size: 18px;
@@ -592,15 +592,15 @@ export function AuditTrail() {
         }
 
         .audit-page-btn:not(:disabled):hover {
-          color: #e2e8f0;
-          border-color: rgba(148, 163, 184, 0.4);
+          color: var(--color-text-primary);
+          border-color: var(--color-surface-border);
         }
 
         .audit-page-num {
           background: transparent;
-          border: 1px solid rgba(148, 163, 184, 0.2);
+          border: 1px solid var(--color-surface-border);
           border-radius: 8px;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           width: 36px;
           height: 36px;
           font-size: 13px;
@@ -613,20 +613,20 @@ export function AuditTrail() {
         }
 
         .audit-page-num:hover {
-          color: #e2e8f0;
-          border-color: rgba(148, 163, 184, 0.4);
+          color: var(--color-text-primary);
+          border-color: var(--color-surface-border);
         }
 
         .audit-page-num-active {
-          background: #0ea5e9;
-          color: #fff;
-          border-color: #0ea5e9;
+          background: var(--color-primary);
+          color: var(--color-text-primary);
+          border-color: var(--color-primary);
         }
 
         .audit-page-num-active:hover {
-          background: #0284c7;
-          color: #fff;
-          border-color: #0284c7;
+          background: var(--color-primary-hover);
+          color: var(--color-text-primary);
+          border-color: var(--color-primary-hover);
         }
 
         /* Responsive */

@@ -488,7 +488,7 @@ export default function ProfilePage() {
           width: 52px;
           height: 52px;
           border-radius: 50%;
-          background: linear-gradient(135deg, #0f766e, #38bdf8);
+          background: linear-gradient(135deg, var(--color-primary), var(--color-info));
           display: flex;
           align-items: center;
           justify-content: center;
@@ -497,17 +497,18 @@ export default function ProfilePage() {
           color: #fff;
           flex-shrink: 0;
           letter-spacing: 0.02em;
+          box-shadow: 0 8px 20px -6px var(--color-primary);
         }
         .profile-page-title {
           font-size: 22px;
           font-weight: 700;
-          color: #f1f5f9;
+          color: var(--color-text-primary);
           margin: 0 0 2px;
           letter-spacing: -0.02em;
         }
         .profile-page-subtitle {
           font-size: 13px;
-          color: #64748b;
+          color: var(--color-text-secondary);
           margin: 0;
         }
         .profile-page-header .btn-secondary {
@@ -520,18 +521,18 @@ export default function ProfilePage() {
           align-items: center;
           gap: 6px;
           font-size: 12px;
-          color: #475569;
+          color: var(--color-text-muted);
           margin-top: -8px;
         }
         .profile-breadcrumb .active {
-          color: #38bdf8;
+          color: var(--color-primary);
         }
         .breadcrumb-link {
-          color: #475569;
+          color: var(--color-text-muted);
           text-decoration: none;
           transition: color 0.15s;
         }
-        .breadcrumb-link:hover { color: #94a3b8; }
+        .breadcrumb-link:hover { color: var(--color-text-secondary); }
 
         /* ── Banners ── */
         .banner {
@@ -545,59 +546,59 @@ export default function ProfilePage() {
           border: 1px solid;
         }
         .banner-error {
-          background: rgba(239, 68, 68, 0.08);
-          border-color: rgba(239, 68, 68, 0.3);
-          color: #fca5a5;
+          background: var(--color-error);
+          border-color: var(--color-error);
+          color: #fff;
         }
-        .banner-error svg { color: #ef4444; flex-shrink: 0; margin-top: 1px; }
-        .banner-error strong { display: block; color: #f87171; margin-bottom: 4px; }
+        .banner-error svg { flex-shrink: 0; margin-top: 1px; }
+        .banner-error strong { display: block; margin-bottom: 4px; }
         .banner-error ul { margin: 0; padding-left: 16px; }
         .banner-success {
-          background: rgba(16, 185, 129, 0.08);
-          border-color: rgba(16, 185, 129, 0.3);
-          color: #6ee7b7;
+          background: var(--color-success);
+          border-color: var(--color-success);
+          color: #fff;
         }
-        .banner-success svg { color: #10b981; flex-shrink: 0; }
+        .banner-success svg { flex-shrink: 0; }
 
         /* ── Card ── */
         .profile-card {
-          background: rgba(15, 23, 42, 0.7);
-          border: 1px solid rgba(148, 163, 184, 0.1);
+          background: var(--color-surface);
+          border: 1px solid var(--color-surface-border);
           border-radius: 14px;
           overflow: hidden;
-          transition: border-color 0.2s;
+          transition: border-color 0.2s, box-shadow 0.2s;
+          box-shadow: var(--shadow-card);
         }
         .profile-card:hover {
-          border-color: rgba(148, 163, 184, 0.18);
+          border-color: var(--color-primary);
         }
         .profile-card-header {
           display: flex;
           align-items: flex-start;
           gap: 12px;
           padding: 20px 24px 16px;
-          border-bottom: 1px solid rgba(148, 163, 184, 0.07);
+          border-bottom: 1px solid var(--color-surface-border);
         }
         .profile-card-icon {
           width: 34px;
           height: 34px;
           border-radius: 8px;
-          background: rgba(56, 189, 248, 0.1);
-          border: 1px solid rgba(56, 189, 248, 0.18);
+          background: var(--color-primary);
+          color: #fff;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #38bdf8;
           flex-shrink: 0;
         }
         .profile-card-title {
           font-size: 14px;
           font-weight: 600;
-          color: #e2e8f0;
+          color: var(--color-text-primary);
           margin: 0 0 2px;
         }
         .profile-card-desc {
           font-size: 12px;
-          color: #64748b;
+          color: var(--color-text-secondary);
           margin: 0;
         }
         .profile-card-body {
@@ -616,13 +617,13 @@ export default function ProfilePage() {
         .profile-label {
           font-size: 12px;
           font-weight: 500;
-          color: #94a3b8;
+          color: var(--color-text-secondary);
           letter-spacing: 0.03em;
           text-transform: uppercase;
         }
         .profile-value {
           font-size: 14px;
-          color: #e2e8f0;
+          color: var(--color-text-primary);
           padding: 9px 0;
           margin: 0;
         }
@@ -634,23 +635,23 @@ export default function ProfilePage() {
         .currency-sample {
           margin-left: 8px;
           font-size: 12px;
-          color: #10b981;
-          background: rgba(16, 185, 129, 0.08);
-          border: 1px solid rgba(16, 185, 129, 0.2);
+          background: var(--color-success);
+          border: 1px solid var(--color-success);
+          color: #fff;
           padding: 2px 8px;
           border-radius: 4px;
         }
         .placeholder-text {
-          color: #475569;
+          color: var(--color-text-muted);
           font-style: italic;
         }
         .profile-input,
         .profile-select {
-          background: rgba(15, 23, 42, 0.8);
-          border: 1px solid rgba(148, 163, 184, 0.2);
+          background: var(--color-app-bg);
+          border: 1px solid var(--color-surface-border);
           border-radius: 8px;
           padding: 10px 14px;
-          color: #e2e8f0;
+          color: var(--color-text-primary);
           font-size: 14px;
           width: 100%;
           outline: none;
@@ -659,31 +660,31 @@ export default function ProfilePage() {
         }
         .profile-input:focus,
         .profile-select:focus {
-          border-color: #38bdf8;
-          box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+          border-color: var(--color-primary);
+          box-shadow: 0 0 0 3px var(--color-primary);
         }
         .input-error {
-          border-color: rgba(239, 68, 68, 0.6) !important;
+          border-color: var(--color-error) !important;
         }
         .input-error:focus {
-          box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
+          box-shadow: 0 0 0 3px var(--color-error) !important;
         }
         .profile-error-inline {
           display: flex;
           align-items: center;
           gap: 5px;
           font-size: 12px;
-          color: #f87171;
+          color: var(--color-error);
         }
 
         /* ── Action row ── */
         .profile-action-row {
           position: sticky;
           bottom: 24px;
-          background: rgba(2, 6, 23, 0.88);
+          background: var(--color-app-bg);
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
-          border: 1px solid rgba(148, 163, 184, 0.15);
+          border: 1px solid var(--color-surface-border);
           border-radius: 12px;
           padding: 14px 20px;
           /* #423: add safe-area-inset-bottom so buttons clear the home indicator */
@@ -693,11 +694,11 @@ export default function ProfilePage() {
           justify-content: space-between;
           gap: 12px;
           z-index: 50;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+          box-shadow: 0 8px 32px rgb(0 0 0 / 0.4);
         }
         .dirty-indicator {
           font-size: 12px;
-          color: #f59e0b;
+          color: var(--color-warning);
           opacity: 0;
           transition: opacity 0.2s;
         }
@@ -708,64 +709,20 @@ export default function ProfilePage() {
           margin-left: auto;
         }
 
-        /* ── Buttons ── */
-        .btn-primary {
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          padding: 9px 20px;
-          background: linear-gradient(135deg, #0f766e, #0891b2);
-          color: #fff;
-          font-size: 13px;
-          font-weight: 600;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: opacity 0.15s, transform 0.1s;
-        }
-        .btn-primary:hover:not(:disabled) { opacity: 0.9; }
-        .btn-primary:active:not(:disabled) { transform: scale(0.98); }
-        .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
-
-        .btn-secondary {
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          padding: 8px 16px;
-          background: rgba(148, 163, 184, 0.08);
-          color: #94a3b8;
-          font-size: 13px;
-          font-weight: 500;
-          border: 1px solid rgba(148, 163, 184, 0.18);
-          border-radius: 8px;
-          cursor: pointer;
-          transition: background 0.15s, color 0.15s;
-        }
-        .btn-secondary:hover { background: rgba(148, 163, 184, 0.14); color: #e2e8f0; }
-
-        .btn-ghost {
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
+        /* ── Buttons (inherit shared tokens; local sizing only) ── */
+        .btn-primary, .btn-secondary, .btn-ghost {
           padding: 9px 16px;
-          background: transparent;
-          color: #64748b;
           font-size: 13px;
-          font-weight: 500;
-          border: 1px solid rgba(100, 116, 139, 0.25);
-          border-radius: 8px;
-          cursor: pointer;
-          transition: color 0.15s, border-color 0.15s;
+          min-height: 36px;
         }
-        .btn-ghost:hover:not(:disabled) { color: #e2e8f0; border-color: rgba(100,116,139,0.5); }
-        .btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-primary { box-shadow: 0 10px 15px -3px var(--color-primary); }
 
         /* ── Spinner ── */
         .spinner {
           display: inline-block;
           width: 14px;
           height: 14px;
-          border: 2px solid rgba(255,255,255,0.25);
+          border: 2px solid rgb(255 255 255 / 0.25);
           border-top-color: #fff;
           border-radius: 50%;
           animation: spin 0.65s linear infinite;

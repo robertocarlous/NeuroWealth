@@ -39,7 +39,8 @@ export interface RebalanceDetails {
 
 export interface UserBalance {
   userId: string;
-  walletAddress: string;
+  // Nullable — Google-first users have no linked wallet until they connect one.
+  walletAddress: string | null;
   positionId: string;
   protocolName: string;
   amount: string;
