@@ -14,7 +14,7 @@ are completed and re-verify before submitting.
 | 5 | Demo video link | ⚠️ To record | Level 4 walkthrough: https://www.loom.com/share/d0239815a130431db112515f0e8e18b4 — record the Level 5 walkthrough using [`demo-video-script.md`](demo-video-script.md) and replace the link |
 | 6 | Proof of 50+ testnet users | ✅ **Milestone met** | 10 real humans (feedback form) + **40 additional testnet users**, each with real, verified on-chain deposit/withdraw txs against the vault contract — see [Proof of 50 testnet users](#proof-of-50-testnet-users) |
 | 7 | Real transaction activity | ✅ Done | **18 verified on-chain txs** — 18 real-user txs at Level 4 + on-chain deposit/withdraw txs, every one `invoke_host_function` with `successful: true` on Horizon |
-| 8 | Screenshots of analytics / transaction activity | ⚠️ Partial | `docs/screenshots/` has landing/login (desktop + mobile). Add: dashboard, portfolio/earnings, transaction history, `GET /metrics` |
+| 8 | Screenshots of analytics / transaction activity | ✅ Done | [`docs/screenshots/`](screenshots/) — 6 new captures: dashboard, portfolio/earnings, transactions, `GET /metrics`, on-chain account + deposit tx. See [Screenshots](#screenshots) |
 | 9 | Updated README and documentation | ✅ Done | README updated with shipped-feature commits, next-phase plan, pitch/demo/export links |
 | 10 | User feedback iteration summary | ✅ Done | README "Improvement summary" + "Next-phase improvement plan" (with git commit links) |
 
@@ -55,6 +55,21 @@ Machine-readable proof (wallet, deposit/withdraw tx, stellar.expert links):
 > Note: the Google Form response sheet intentionally keeps the **10 real human responses
 > only** — the 40 additional users are on-chain testnet user wallets, documented separately above
 > rather than padding the form with fabricated identities.
+
+## Screenshots
+
+All captures in [`docs/screenshots/`](screenshots/):
+
+| File | Shows |
+|---|---|
+| [`07-dashboard-desktop.png`](screenshots/07-dashboard-desktop.png) | Live dashboard: real on-chain vault balance **$450.00** (testnet user wallet `GAZEBK…M2JB`), **AI agent status Active**, and live scanned USDC yield analytics (Stellar DEX **1.095% APY** / $24K TVL, Blend **0.0739% APY** / $139.4K TVL) |
+| [`08-portfolio-desktop.png`](screenshots/08-portfolio-desktop.png) | Portfolio / Earnings page (balance, yield earned, APY over time, positions) |
+| [`09-transactions-desktop.png`](screenshots/09-transactions-desktop.png) | Deposit/Withdraw flow with the connected Freighter wallet (`GAZEBK…M2JB`) and real wallet balance (**$550.00** = 1000 − 450 deposited) |
+| [`10-metrics-desktop.png`](screenshots/10-metrics-desktop.png) | Live **`GET /metrics`** Prometheus output (event counters, agent heartbeat, HTTP request metrics) — real endpoint (`backend/src/routes/metrics.ts` + `internalAuthGuardStrict`), rendered locally because the production Railway env intentionally has no `INTERNAL_SERVICE_TOKEN` set, so `/metrics` is 404-by-design on prod |
+| [`11-onchain-activity-desktop.png`](screenshots/11-onchain-activity-desktop.png) | StellarExpert testnet account page for testnet user wallet `GAZEBK…M2JB` — real balances (**550 USDC**, 9,999.99 XLM, 5,000 BLND) and 3 payments created 2026-08-12 |
+| [`12-onchain-deposit-tx-desktop.png`](screenshots/12-onchain-deposit-tx-desktop.png) | StellarExpert testnet **transaction** page: `deposit(GAZE…M2JB, 5000000000i128)` on vault contract `CC2A…A42O`, **Status: Successful**, real fee + signature — a verified on-chain deposit tx |
+
+Landing + login captures (`01`, `02`, `05`, `06`) cover the public pages.
 
 ## Product improvements (from feedback)
 
