@@ -9,7 +9,7 @@ are completed and re-verify before submitting.
 |---|---|---|---|
 | 1 | Public GitHub repository | ✅ Done | https://github.com/robertocarlous/NeuroWealth (visibility: public) |
 | 2 | Minimum 20+ meaningful commits | ✅ Done | 51 commits on `main` (`git rev-list --count HEAD`) |
-| 3 | Live deployed application | ⚠️ Blocked | Deploy workflow exists (`.github/workflows/deploy-production.yml`) but fails on missing secrets — see "Deployment secrets" below |
+| 3 | Live deployed application | ✅ Live | Deploy workflow (`.github/workflows/deploy-production.yml`) is green; verified at https://neurowealth-frontend.vercel.app |
 | 4 | PPT / pitch deck link | ⚠️ Link ready | [Pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit?slide=id.p#slide=id.p) — verify it covers the sections in [`pitch-deck-outline.md`](pitch-deck-outline.md) |
 | 5 | Demo video link | ⚠️ To record | Level 4 walkthrough: https://www.loom.com/share/d0239815a130431db112515f0e8e18b4 — record the Level 5 walkthrough using [`demo-video-script.md`](demo-video-script.md) and replace the link |
 | 6 | Proof of 50+ testnet users | ❌ **Milestone** | 10 onboarded (see `README.md` "Users onboarded"). Need 40 more with real wallet interactions + Google Form responses |
@@ -35,27 +35,23 @@ are completed and re-verify before submitting.
 | Yield transparency | Yield-visibility card + agent status always "Active" once funds are held | [`b7d9d71`](https://github.com/robertocarlous/NeuroWealth/commit/b7d9d71), [`b008dbf`](https://github.com/robertocarlous/NeuroWealth/commit/b008dbf) |
 | Reliability | Backend Jest suite repaired — 186 tests green | [`6fa7c7a`](https://github.com/robertocarlous/NeuroWealth/commit/6fa7c7a) |
 
-## Deployment secrets (blocker for #3)
+## Deployment secrets
 
 The deploy workflow needs these GitHub Actions secrets (repo → Settings → Secrets →
-Actions). Without them, `yarn validate:env` fails and nothing reaches Vercel.
+Actions). **All 11 are set and the production deploy is live.**
 
-**Status: 10 of 11 set** (values derived from the local Vercel project link and the
-Railway Postgres service). Remaining:
-
-- `VERCEL_TOKEN` — create at vercel.com → Account Settings → Tokens → Create Token
-  (the CLI token is expired; do not reuse `frontend/.vercel` values for this).
-
-Full list now configured:
+Configured:
 
 - `PROD_APP_URL`, `PROD_DB_HOST`, `PROD_DB_PORT`, `PROD_DB_NAME`, `PROD_DB_USER`,
   `PROD_DB_PASSWORD` (Railway Postgres), `PROD_WALLET_ENCRYPTION_KEY`,
-  `PROD_GOOGLE_CLIENT_ID`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+  `PROD_GOOGLE_CLIENT_ID`, `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
 
 > WhatsApp secrets are **not** required — this is not a WhatsApp application. The
 > frontend `validate:env` treats the WhatsApp Cloud API as an optional integration
-> (all-or-nothing). Google sign-in also needs `GOOGLE_CLIENT_ID` on the Railway
-> backend service, otherwise the backend's `/auth/google` returns 503.
+> (all-or-nothing). Google sign-in is wired end-to-end: `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
+> is set on the Vercel project (the `vercel --prod` step uses a Vercel-hosted build, so
+> `NEXT_PUBLIC_*` values must live on the Vercel project, not just GitHub secrets) and
+> `GOOGLE_CLIENT_ID` is set on the Railway backend service.
 
 Verify with: `gh secret list`
 

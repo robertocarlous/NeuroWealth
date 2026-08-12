@@ -209,11 +209,11 @@ issues for security reports:
 | Blend pool (`TestnetV2`) | `CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF` |
 | Network | Stellar testnet (`https://soroban-testnet.stellar.org`) |
 
-> **Deployment status**: the frontend deploy workflow (`.github/workflows/deploy-production.yml`)
-> is wired up and 10 of its 11 secrets are configured. The only remaining blocker is the
-> `VERCEL_TOKEN` secret (create one at vercel.com → Account Settings → Tokens). WhatsApp is
-> not required — it's an optional integration (this is not a WhatsApp application). See
-> [`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md) for details.
+> **Deployment status**: **live.** The frontend deploy workflow
+> (`.github/workflows/deploy-production.yml`) is green and the latest build (including
+> Google sign-in) is deployed to https://neurowealth-frontend.vercel.app. All 11 deploy
+> secrets are configured; WhatsApp is optional and unconfigured (this is not a WhatsApp
+> application). See [`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md) for details.
 
 Get testnet USDC for this deployment from the Blend faucet at
 [testnet.blend.capital](https://testnet.blend.capital/) — connect a Friendbot-funded wallet
