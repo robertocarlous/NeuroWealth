@@ -81,9 +81,12 @@ export function VaultDashboard() {
   }, [load]);
 
   const hasFunds = Boolean(balance && balance.balance > 0);
-  const isDeployed = Boolean(
-    vaultState && vaultState.activeProtocol && vaultState.activeProtocol !== "none",
-  );
+  const deployedProtocol =
+    vaultState && vaultState.activeProtocol && vaultState.activeProtocol !== "none"
+      ? vaultState.activeProtocol
+      : null;
+  const isDeployed = hasFunds;
+  const hasApy = Boolean(vaultState && vaultState.apy > 0);
 
   return (
     <div className="w-full space-y-6">
@@ -191,27 +194,40 @@ export function VaultDashboard() {
                 </span>
               </div>
 
-              {loading && !vaultState ? (
+              {loading && !balance ? (
                 <div className="h-4 w-64 rounded bg-surface animate-pulse" />
-              ) : isDeployed && vaultState ? (
+              ) : hasFunds ? (
                 <p className="text-sm text-text-secondary leading-relaxed max-w-2xl">
-                  Your funds are deployed in{" "}
-                  <span className="font-medium text-text-primary capitalize">
-                    {vaultState.activeProtocol}
-                  </span>
-                  , currently earning{" "}
-                  <span className="font-semibold text-success">
-                    {formatApy(vaultState.apy)} APY
-                  </span>
-                  . New deposits are deployed within seconds, and the agent
-                  re-checks hourly afterward, moving your funds automatically
-                  if a better opportunity appears — no action needed from you.
+                  Your deposit has been moved to the protocol
+                  {hasApy && vaultState ? (
+                    <>
+                      {" "}
+                      — currently earning{" "}
+                      <span className="font-semibold text-success">
+                        {formatApy(vaultState.apy)} APY
+                      </span>
+                    </>
+                  ) : null}
+                  {deployedProtocol ? (
+                    <>
+                      {" "}
+                      in{" "}
+                      <span className="font-medium text-text-primary capitalize">
+                        {deployedProtocol}
+                      </span>
+                    </>
+                  ) : (
+                    " (the best available yield)"
+                  )}
+                  . The agent re-checks hourly and moves your funds
+                  automatically if a better opportunity appears — no action
+                  needed from you.
                 </p>
               ) : (
                 <p className="text-sm text-text-secondary leading-relaxed max-w-2xl">
-                  {hasFunds
-                    ? "Your deposit is in the vault — the agent deploys idle funds into the best available protocol (e.g. Blend) within seconds of a deposit confirming on-chain. Refresh in a moment if this doesn't update right away."
-                    : "Nothing to deploy yet. As soon as you deposit, the agent picks up the funds and moves them into a yield strategy within seconds — you don't need to do anything else."}
+                  Nothing to deploy yet. As soon as you deposit, the agent picks
+                  up the funds and moves them into a yield strategy within
+                  seconds — you don&apos;t need to do anything else.
                 </p>
               )}
             </div>
