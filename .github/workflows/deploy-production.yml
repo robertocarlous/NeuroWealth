@@ -32,6 +32,7 @@ jobs:
           NODE_ENV: production
           NEXT_PUBLIC_APP_ENV: production
           NEXT_PUBLIC_APP_URL: ${{ secrets.PROD_APP_URL }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.PROD_GOOGLE_CLIENT_ID }}
           WHATSAPP_APP_SECRET: ${{ secrets.PROD_WHATSAPP_APP_SECRET }}
           WHATSAPP_VERIFY_TOKEN: ${{ secrets.PROD_WHATSAPP_VERIFY_TOKEN }}
           WHATSAPP_ACCESS_TOKEN: ${{ secrets.PROD_WHATSAPP_ACCESS_TOKEN }}
@@ -58,6 +59,7 @@ jobs:
           NODE_ENV: production
           NEXT_PUBLIC_APP_ENV: production
           NEXT_PUBLIC_APP_URL: ${{ secrets.PROD_APP_URL }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ secrets.PROD_GOOGLE_CLIENT_ID }}
           STELLAR_NETWORK: mainnet
           STELLAR_HORIZON_URL: https://horizon.stellar.org
 
