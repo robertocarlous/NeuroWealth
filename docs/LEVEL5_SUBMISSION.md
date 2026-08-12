@@ -30,7 +30,7 @@ are completed and re-verify before submitting.
 
 | Feedback theme | Shipment | Commit |
 |---|---|---|
-| Google sign-in (6 of 10 users) | Full Google sign-in — backend ID-token verification, `googleId` + nullable wallet, migration, button + auth context, tests | [`b7d9d71`](https://github.com/robertocarlous/NeuroWealth/commit/b7d9d71) |
+| Google sign-in (6 of 10 users) | Full Google sign-in — backend ID-token verification, `googleId` + nullable wallet, migration, button + auth context, tests. **Verified live end-to-end** (button renders on production, backend `/api/auth/google` returns 401 for bad tokens, meaning CORS + `GOOGLE_CLIENT_ID` are correctly configured) | [`b7d9d71`](https://github.com/robertocarlous/NeuroWealth/commit/b7d9d71) |
 | UI polish (3 of 10 users) | Design-token UI polish across profile, settings, security, preferences, audit trail | [`b7d9d71`](https://github.com/robertocarlous/NeuroWealth/commit/b7d9d71), [`5eb005c`](https://github.com/robertocarlous/NeuroWealth/commit/5eb005c) |
 | Yield transparency | Yield-visibility card + agent status always "Active" once funds are held | [`b7d9d71`](https://github.com/robertocarlous/NeuroWealth/commit/b7d9d71), [`b008dbf`](https://github.com/robertocarlous/NeuroWealth/commit/b008dbf) |
 | Reliability | Backend Jest suite repaired — 186 tests green | [`6fa7c7a`](https://github.com/robertocarlous/NeuroWealth/commit/6fa7c7a) |
@@ -60,8 +60,8 @@ Verify with: `gh secret list`
 | Item | Link |
 |---|---|
 | GitHub repository | https://github.com/robertocarlous/NeuroWealth |
-| Live app | https://neurowealth-frontend.vercel.app (⚠️ re-verify once secrets are set) |
-| Backend API | https://neurowealth-production.up.railway.app |
+| Live app | https://neurowealth-frontend.vercel.app |
+| Backend API | https://neurowealth-web-production.up.railway.app (deployed 2026-08-12 with the latest code, incl. `/api/auth/google`) |
 | Vault contract (testnet) | [`CC2A56NEH35Z2VJ5TALSULYUICPCJXU3KLBHOTMU3OSRSOCCDJN5A42O`](https://stellar.expert/explorer/testnet/contract/CC2A56NEH35Z2VJ5TALSULYUICPCJXU3KLBHOTMU3OSRSOCCDJN5A42O) |
 | Pitch deck | https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit |
 | Demo video | https://www.loom.com/share/d0239815a130431db112515f0e8e18b4 (Level 4 — replace with Level 5 walkthrough) |
