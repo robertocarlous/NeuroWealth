@@ -10,7 +10,7 @@ are completed and re-verify before submitting.
 | 1 | Public GitHub repository | ✅ Done | https://github.com/robertocarlous/NeuroWealth (visibility: public) |
 | 2 | Minimum 20+ meaningful commits | ✅ Done | 58 commits on `main` (`git rev-list --count HEAD`) |
 | 3 | Live deployed application | ✅ Live | Deploy workflow (`.github/workflows/deploy-production.yml`) is green; verified at https://neurowealth-frontend.vercel.app |
-| 4 | PPT / pitch deck link | ⚠️ Link ready | [Pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit?slide=id.p#slide=id.p) — verify it covers the sections in [`pitch-deck-outline.md`](pitch-deck-outline.md) |
+| 4 | PPT / pitch deck link | ⚠️ Needs deck edits | [Pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit) is public (11 slides). Verified vs [`pitch-deck-outline.md`](pitch-deck-outline.md) — see [Pitch deck verification](#pitch-deck-verification) |
 | 5 | Demo video link | ⚠️ To record | Level 4 walkthrough: https://www.loom.com/share/d0239815a130431db112515f0e8e18b4 — record the Level 5 walkthrough using [`demo-video-script.md`](demo-video-script.md) and replace the link |
 | 6 | Proof of 50+ testnet users | ✅ **Milestone met** | 10 real humans (feedback form) + **40 additional testnet users**, each with real, verified on-chain deposit/withdraw txs against the vault contract — see [Proof of 50 testnet users](#proof-of-50-testnet-users) |
 | 7 | Real transaction activity | ✅ Done | **18 verified on-chain txs** — 18 real-user txs at Level 4 + on-chain deposit/withdraw txs, every one `invoke_host_function` with `successful: true` on Horizon |
@@ -70,6 +70,27 @@ All captures in [`docs/screenshots/`](screenshots/):
 | [`12-onchain-deposit-tx-desktop.png`](screenshots/12-onchain-deposit-tx-desktop.png) | StellarExpert testnet **transaction** page: `deposit(GAZE…M2JB, 5000000000i128)` on vault contract `CC2A…A42O`, **Status: Successful**, real fee + signature — a verified on-chain deposit tx |
 
 Landing + login captures (`01`, `02`, `05`, `06`) cover the public pages.
+
+## Pitch deck verification
+
+Deck (11 slides) verified against [`pitch-deck-outline.md`](pitch-deck-outline.md):
+
+| Outline section | Deck slide | Status |
+|---|---|---|
+| 1. Hook / Problem | 2 (PROBLEM) | ✅ |
+| 2. Solution | 3 (WHAT IS), 4 (HOW IT WORKS) | ✅ |
+| 3. Product demo (screenshots / clips) | — | ⚠️ **Missing** — add a slide using `docs/screenshots/` (dashboard, deposit flow, `GET /metrics`) |
+| 4. Market | 8 (MARKET TRACTION) | ⚠️ Partial — traction yes, no market-size framing |
+| 5. Competitive landscape | 6 (WHY NEUROWEALTH vs banks) | ✅ (banks; could add other DeFi agents) |
+| 6. Business model / growth | 8 (0.5% profit fee) | ⚠️ Partial — add growth/milestone line |
+| 7. Roadmap | — | ⚠️ **Missing** — add a slide with the roadmap items |
+| 8. Ask / next steps | — | ⚠️ **Missing** — add an ask slide |
+
+**Numbers to fix for Level 5 accuracy** (slide 8 currently reads inflated/unverifiable):
+- "TVL $2M+" → real on-chain vault TVL ≈ **$10K (testnet)**, 50 testnet users, **18 verified on-chain txs**
+- "APY 10–15%" → live testnet scan: Stellar DEX **1.095%** / Blend **0.0739%**
+- "Uniswap, Aave" → **not on Stellar**; the agent rotates **Blend + Stellar DEX**
+- Slide 10 case studies are hypotheticals — label them as illustrative, not real results
 
 ## Product improvements (from feedback)
 
