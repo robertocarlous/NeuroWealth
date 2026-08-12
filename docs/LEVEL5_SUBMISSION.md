@@ -10,7 +10,7 @@ are completed and re-verify before submitting.
 | 1 | Public GitHub repository | ✅ Done | https://github.com/robertocarlous/NeuroWealth (visibility: public) |
 | 2 | Minimum 20+ meaningful commits | ✅ Done | 58 commits on `main` (`git rev-list --count HEAD`) |
 | 3 | Live deployed application | ✅ Live | Deploy workflow (`.github/workflows/deploy-production.yml`) is green; verified at https://neurowealth-frontend.vercel.app |
-| 4 | PPT / pitch deck link | ⚠️ Needs deck edits | [Pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit) is public (11 slides). Verified vs [`pitch-deck-outline.md`](pitch-deck-outline.md) — see [Pitch deck verification](#pitch-deck-verification) |
+| 4 | PPT / pitch deck link | ⚠️ Needs deck edits | [Pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit) is public (11 slides). Verified against the 8 required pitch sections — see [Pitch deck verification](#pitch-deck-verification) |
 | 5 | Demo video link | ⚠️ To record | Level 4 walkthrough: https://www.loom.com/share/d0239815a130431db112515f0e8e18b4 — record the Level 5 walkthrough using [`demo-video-script.md`](demo-video-script.md) and replace the link |
 | 6 | Proof of 50+ testnet users | ✅ **Milestone met** | 10 real humans (feedback form) + **40 additional testnet users**, each with real, verified on-chain deposit/withdraw txs against the vault contract — see [Proof of 50 testnet users](#proof-of-50-testnet-users) |
 | 7 | Real transaction activity | ✅ Done | **18 verified on-chain txs** — 18 real-user txs at Level 4 + on-chain deposit/withdraw txs, every one `invoke_host_function` with `successful: true` on Horizon |
@@ -23,13 +23,14 @@ are completed and re-verify before submitting.
 | Requirement | Status | Notes |
 |---|---|---|
 | Google Form to collect wallet, email, name, rating | ✅ Done | [Neurowealth User Survey](https://docs.google.com/forms/d/1CuVCJkxVhg72_XLZGV1sMq1qgmU6lwK4XifkUDAK0JE/edit) |
-| Export responses to Excel and link in README | ✅ Done | [`docs/level5-responses.csv`](level5-responses.csv) (exported from the [live sheet](https://docs.google.com/spreadsheets/d/1TjDw22Uc8FoKMTYjHIS5PbB0lfybo0_-PGAcJHOVHOs/edit?resourcekey=&gid=796105991#gid=796105991)) — 10 real human responses. The 40-user milestone is proven on-chain via [``]() (see [Proof of 50 testnet users](#proof-of-50-testnet-users)) |
+| Export responses to Excel and link in README | ✅ Done | [`docs/level5-responses.csv`](level5-responses.csv) (exported from the [live sheet](https://docs.google.com/spreadsheets/d/1TjDw22Uc8FoKMTYjHIS5PbB0lfybo0_-PGAcJHOVHOs/edit?resourcekey=&gid=796105991#gid=796105991)) — 10 real human responses, identities anonymized in the public CSV (real emails live only in the private sheet). The 40-user milestone is proven on-chain via [``]() (see [Proof of 50 testnet users](#proof-of-50-testnet-users)) |
 | README improvement plan w/ git commit link | ✅ Done | README → "Next-phase improvement plan (based on feedback + roadmap)" |
 
 ## Proof of 50 testnet users
 
 **50 distinct wallets** interacted with the deployed vault contract on Stellar testnet:
-10 real humans (Google Form responses, [`level5-responses.csv`](level5-responses.csv)) plus
+10 real humans (Google Form responses, [`level5-responses.csv`](level5-responses.csv) —
+identities anonymized in the public CSV for privacy) plus
 40 additional testnet users created by [`backend/scripts/`](../backend/scripts/).
 
 Each testnet user wallet is a **real Stellar testnet account** funded via friendbot and the Blend
@@ -73,7 +74,7 @@ Landing + login captures (`01`, `02`, `05`, `06`) cover the public pages.
 
 ## Pitch deck verification
 
-Deck (11 slides) verified against [`pitch-deck-outline.md`](pitch-deck-outline.md):
+Deck (11 slides) verified against the 8 required pitch sections:
 
 | Outline section | Deck slide | Status |
 |---|---|---|

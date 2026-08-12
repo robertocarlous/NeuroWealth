@@ -236,7 +236,8 @@ submission requirement and the [Proof of 50 testnet users](docs/LEVEL5_SUBMISSIO
 - **Raw responses (public sheet)**: [Neurowealth User Survey — responses](https://docs.google.com/spreadsheets/d/1TjDw22Uc8FoKMTYjHIS5PbB0lfybo0_-PGAcJHOVHOs/edit?resourcekey=&gid=796105991#gid=796105991)
   (CSV export confirmed publicly reachable with no auth).
 - **Exported responses (Excel/CSV)**: [`docs/level5-responses.csv`](docs/level5-responses.csv)
-  — exported from the live sheet (10 real human responses). The 40 additional Level 5 users
+  — exported from the live sheet (10 real human responses, identities anonymized in the
+  public CSV for privacy). The 40 additional Level 5 users
   are on-chain testnet user wallets proven in [`docs/`](docs/).
 - **Pitch deck**: [NeuroWealth — Blue Belt pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit?slide=id.p#slide=id.p)
   (outline at [`docs/pitch-deck-outline.md`](docs/pitch-deck-outline.md)).
