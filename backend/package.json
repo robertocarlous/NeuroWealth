@@ -42,8 +42,17 @@
         {
           "tsconfig": "tsconfig.json"
         }
+      ],
+      "^.+\\.(js|mjs|cjs)$": [
+        "babel-jest",
+        {
+          "configFile": "./babel.config.cjs"
+        }
       ]
-    }
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(@blend-capital|@stellar|@noble|@scure|@paulmillr|eventsource|uint8array-extras|smol-toml)/)"
+    ]
   },
   "prisma": {
     "schema": "prisma/schema.prisma",
@@ -89,6 +98,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.29.7",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",

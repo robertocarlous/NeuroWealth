@@ -1,4 +1,4 @@
-import { createSecretsProvider, bootstrapSecrets, getSecretsProvider } from '../../../src/config/secrets'
+import { createSecretsProvider, getSecretsProvider } from '../../../src/config/secrets'
 
 jest.mock('../../../src/utils/logger', () => ({
   logger: { info: jest.fn(), warn: jest.fn(), error: jest.fn() },
@@ -11,7 +11,7 @@ const mockSend = jest.fn()
 jest.mock('@aws-sdk/client-ssm', () => ({
   SSMClient: jest.fn().mockImplementation(() => ({ send: mockSend })),
   GetParameterCommand: jest.fn().mockImplementation((input) => ({ input })),
-}))
+}), { virtual: true })
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -28,7 +28,6 @@ function deleteEnv(...keys: string[]) {
 describe('EnvSecretsProvider (SECRET_BACKEND=env)', () => {
   beforeEach(() => {
     deleteEnv('SECRET_BACKEND')
-    jest.resetModules()
   })
 
   it('returns the env var value', async () => {
@@ -116,13 +115,15 @@ describe('AwsSsmSecretsProvider (SECRET_BACKEND=aws-ssm)', () => {
 // ── bootstrapSecrets ──────────────────────────────────────────────────────────
 
 describe('bootstrapSecrets()', () => {
-  afterEach(() => {
-    deleteEnv('SECRET_BACKEND')
-    jest.resetModules()
+  beforeEach(() => {
+    deleteEnv('SECRET_BACKEND', 'SSM_PREFIX')
+    mockSend.mockReset()
   })
 
   it('is a no-op when SECRET_BACKEND=env', async () => {
-    deleteEnv('SECRET_BACKEND')
+    // Fresh module so the singleton provider is recreated per test.
+    jest.resetModules()
+    const { bootstrapSecrets } = require('../../../src/config/secrets')
     // bootstrapSecrets with env backend should resolve without calling SSM
     await expect(bootstrapSecrets()).resolves.toBeUndefined()
     expect(mockSend).not.toHaveBeenCalled()
@@ -130,6 +131,8 @@ describe('bootstrapSecrets()', () => {
 
   it('populates process.env from SSM when SECRET_BACKEND=aws-ssm', async () => {
     setEnv({ SECRET_BACKEND: 'aws-ssm', SSM_PREFIX: '/neurowealth' })
+    jest.resetModules()
+    const { bootstrapSecrets } = require('../../../src/config/secrets')
     // Return a valid value for every SECRET_KEY.
     mockSend.mockResolvedValue({ Parameter: { Value: 'fetched-secret' } })
 

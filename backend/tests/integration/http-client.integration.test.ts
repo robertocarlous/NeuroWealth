@@ -18,6 +18,10 @@ describe('HttpClientAdapter Integration — simulated failures', () => {
     })
   })
 
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
   describe('transient failures — retry recovers', () => {
     it('should succeed after intermittent HTTP 5xx errors', async () => {
       let callCount = 0
@@ -98,6 +102,7 @@ describe('HttpClientAdapter Integration — simulated failures', () => {
 
     it('should recover after circuit breaker reset timeout', async () => {
       const mock = jest.fn()
+      const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(1_000_000)
 
       // Trip the circuit breaker
       mock.mockRejectedValue(new Error('fail'))
@@ -110,16 +115,13 @@ describe('HttpClientAdapter Integration — simulated failures', () => {
         adapter.execute(mock, 'recoverableApi.call')
       ).rejects.toThrow(CircuitBreakerError)
 
-      // Wait for reset
-      jest.useFakeTimers()
-      jest.advanceTimersByTime(300)
+      // Wait for reset (reset is Date.now-based, no real timer)
+      nowSpy.mockReturnValue(1_000_000 + 300)
 
       // Service recovers — should succeed in half-open state
       mock.mockResolvedValue('recovered')
       const result = await adapter.execute(mock, 'recoverableApi.call')
       expect(result).toBe('recovered')
-
-      jest.useRealTimers()
     })
   })
 
@@ -197,6 +199,7 @@ describe('HttpClientAdapter Integration — simulated failures', () => {
       })
 
       const simulateStellarRpc = jest.fn()
+      const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(2_000_000)
 
       // Simulate persistent submission failure
       simulateStellarRpc.mockRejectedValue(new Error('stellar rpc: timeout'))
@@ -210,14 +213,11 @@ describe('HttpClientAdapter Integration — simulated failures', () => {
       ).rejects.toThrow(CircuitBreakerError)
 
       // After reset, service recovers
-      jest.useFakeTimers()
-      jest.advanceTimersByTime(600)
+      nowSpy.mockReturnValue(2_000_000 + 600)
 
       simulateStellarRpc.mockResolvedValue('tx_hash_abc')
       const hash = await stellarAdapter.execute(simulateStellarRpc, 'stellar.submitTransaction')
       expect(hash).toBe('tx_hash_abc')
-
-      jest.useRealTimers()
     })
   })
 

@@ -1,3 +1,7 @@
+// Force request sampling so the logger always logs (the middleware reads
+// LOG_SAMPLE_RATE at import time — default 0.1 makes this test flaky).
+process.env.LOG_SAMPLE_RATE = '1'
+
 import express from 'express'
 import request from 'supertest'
 import { correlationIdMiddleware } from '../../src/middleware/correlationId'

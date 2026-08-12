@@ -18,6 +18,10 @@ describe('HttpClientAdapter', () => {
     })
   })
 
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
   describe('execute', () => {
     it('should return the result of a successful function', async () => {
       const result = await adapter.execute(async () => 'ok')
@@ -102,6 +106,7 @@ describe('HttpClientAdapter', () => {
 
     it('should transition to half-open after reset timeout', async () => {
       const fn = jest.fn().mockRejectedValue(new Error('fail'))
+      const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(1_000_000)
 
       // Trigger circuit breaker (3 failures needed)
       for (let i = 0; i < 3; i++) {
@@ -111,19 +116,17 @@ describe('HttpClientAdapter', () => {
       // Circuit is OPEN - should block
       await expect(adapter.execute(fn)).rejects.toThrow(CircuitBreakerError)
 
-      // Advance past reset timeout
-      jest.useFakeTimers()
-      jest.advanceTimersByTime(200)
+      // Advance past reset timeout (reset is Date.now-based, no real timer)
+      nowSpy.mockReturnValue(1_000_000 + 200)
 
       // Should now be half-open and allow one request
       // But it's still failing, so it should throw fail (not CircuitBreakerError)
       await expect(adapter.execute(fn)).rejects.toThrow('fail')
-
-      jest.useRealTimers()
     })
 
     it('should reset state after successful request in half-open state', async () => {
       const fn = jest.fn()
+      const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(1_000_000)
 
       // Trip circuit breaker: 3 failures
       fn.mockRejectedValue(new Error('fail'))
@@ -135,8 +138,7 @@ describe('HttpClientAdapter', () => {
       await expect(adapter.execute(fn)).rejects.toThrow(CircuitBreakerError)
 
       // Advance past reset timeout
-      jest.useFakeTimers()
-      jest.advanceTimersByTime(200)
+      nowSpy.mockReturnValue(1_000_000 + 200)
 
       // Now half-open — succeed
       fn.mockResolvedValue('recovered')
@@ -146,8 +148,6 @@ describe('HttpClientAdapter', () => {
       // Circuit should now be CLOSED — next request goes through immediately
       const result2 = await adapter.execute(async () => 'all good')
       expect(result2).toBe('all good')
-
-      jest.useRealTimers()
     })
   })
 

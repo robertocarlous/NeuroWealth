@@ -7,7 +7,15 @@ import { logger } from '../../../src/utils/logger';
 import { makeSession } from '../../fixtures';
 
 jest.mock('../../../src/config');
-jest.mock('../../../src/db');
+jest.mock('../../../src/db', () => ({
+  __esModule: true,
+  default: {
+    session: {
+      findUnique: jest.fn(),
+      delete: jest.fn(),
+    },
+  },
+}));
 jest.mock('../../../src/utils/logger');
 
 type AuthPayload = {
@@ -34,6 +42,10 @@ describe('Authentication Middleware (Unified)', () => {
       headers: {},
       params: {},
       body: {},
+      header: jest.fn((name: string) => {
+        const key = name.toLowerCase();
+        return (req.headers as Record<string, string | undefined>)[key];
+      }) as any,
     };
 
     res = {

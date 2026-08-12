@@ -120,20 +120,22 @@ describe('ResilientRpcClient', () => {
       mockGetAccount
         .mockRejectedValueOnce(new Error('fail 1'))
         .mockRejectedValueOnce(new Error('fail 2'))
-        // After circuit opens, second endpoint should be tried
+        // First call: after the primary circuit opens, fall over to secondary
         .mockResolvedValueOnce({ id: 'GABC', sequence: '3' })
+        // Second call: primary circuit is now OPEN → secondary serves directly
+        .mockResolvedValueOnce({ id: 'GABC', sequence: '4' })
 
       setEnvUrls('https://primary.example.com,https://secondary.example.com')
       jest.resetModules()
       const { getAccount } = await import('../src/stellar/client')
 
-      // First two calls exhaust retries and open the primary circuit
-      await expect(getAccount('GABC')).rejects.toThrow()
-      await expect(getAccount('GABC')).rejects.toThrow()
+      // First call: primary fails twice (opening its breaker), secondary succeeds
+      const first = await getAccount('GABC')
+      expect(first).toEqual({ id: 'GABC', sequence: '3' })
 
-      // Third call: primary circuit is open → skipped → secondary succeeds
-      const result = await getAccount('GABC')
-      expect(result).toEqual({ id: 'GABC', sequence: '3' })
+      // Second call: primary circuit is open → skipped → secondary succeeds
+      const second = await getAccount('GABC')
+      expect(second).toEqual({ id: 'GABC', sequence: '4' })
     })
   })
 
@@ -150,10 +152,18 @@ describe('ResilientRpcClient', () => {
     })
 
     it('throws on ERROR status', async () => {
-      mockSendTransaction.mockResolvedValueOnce({
-        status: 'ERROR',
-        errorResult: { toXDR: () => 'base64err' },
-      })
+      // maxRetries = 1, so the adapter retries after the first ERROR throw;
+      // queue an ERROR response for each attempt so the final rejection is the
+      // Transaction failed error (not an undefined response).
+      mockSendTransaction
+        .mockResolvedValueOnce({
+          status: 'ERROR',
+          errorResult: { toXDR: () => 'base64err' },
+        })
+        .mockResolvedValueOnce({
+          status: 'ERROR',
+          errorResult: { toXDR: () => 'base64err' },
+        })
 
       setEnvUrls('https://primary.example.com')
       jest.resetModules()
