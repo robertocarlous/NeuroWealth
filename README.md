@@ -210,9 +210,10 @@ issues for security reports:
 | Network | Stellar testnet (`https://soroban-testnet.stellar.org`) |
 
 > **Deployment status**: the frontend deploy workflow (`.github/workflows/deploy-production.yml`)
-> is live but currently requires the repo's `PROD_*` and `VERCEL_*` GitHub Actions secrets
-> to be configured before it can push to Vercel. See
-> [`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md) for the exact secret list.
+> is wired up and 10 of its 11 secrets are configured. The only remaining blocker is the
+> `VERCEL_TOKEN` secret (create one at vercel.com → Account Settings → Tokens). WhatsApp is
+> not required — it's an optional integration (this is not a WhatsApp application). See
+> [`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md) for details.
 
 Get testnet USDC for this deployment from the Blend faucet at
 [testnet.blend.capital](https://testnet.blend.capital/) — connect a Friendbot-funded wallet

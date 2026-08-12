@@ -38,13 +38,24 @@ are completed and re-verify before submitting.
 ## Deployment secrets (blocker for #3)
 
 The deploy workflow needs these GitHub Actions secrets (repo → Settings → Secrets →
-Actions). Without them, `yarn validate:env` fails and nothing reaches Vercel:
+Actions). Without them, `yarn validate:env` fails and nothing reaches Vercel.
 
-- `PROD_APP_URL`, `PROD_WHATSAPP_APP_SECRET`, `PROD_WHATSAPP_VERIFY_TOKEN`,
-  `PROD_WHATSAPP_ACCESS_TOKEN`, `PROD_WHATSAPP_PHONE_NUMBER_ID`, `PROD_WHATSAPP_WABA_ID`
-- `PROD_DB_HOST`, `PROD_DB_PORT`, `PROD_DB_NAME`, `PROD_DB_USER`, `PROD_DB_PASSWORD`
-- `PROD_WALLET_ENCRYPTION_KEY`
-- `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+**Status: 10 of 11 set** (values derived from the local Vercel project link and the
+Railway Postgres service). Remaining:
+
+- `VERCEL_TOKEN` — create at vercel.com → Account Settings → Tokens → Create Token
+  (the CLI token is expired; do not reuse `frontend/.vercel` values for this).
+
+Full list now configured:
+
+- `PROD_APP_URL`, `PROD_DB_HOST`, `PROD_DB_PORT`, `PROD_DB_NAME`, `PROD_DB_USER`,
+  `PROD_DB_PASSWORD` (Railway Postgres), `PROD_WALLET_ENCRYPTION_KEY`,
+  `PROD_GOOGLE_CLIENT_ID`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
+
+> WhatsApp secrets are **not** required — this is not a WhatsApp application. The
+> frontend `validate:env` treats the WhatsApp Cloud API as an optional integration
+> (all-or-nothing). Google sign-in also needs `GOOGLE_CLIENT_ID` on the Railway
+> backend service, otherwise the backend's `/auth/google` returns 503.
 
 Verify with: `gh secret list`
 

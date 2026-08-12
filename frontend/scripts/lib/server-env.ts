@@ -6,11 +6,6 @@
 const requiredEnvVars = [
   "NEXT_PUBLIC_APP_ENV",
   "NEXT_PUBLIC_APP_URL",
-  "WHATSAPP_APP_SECRET",
-  "WHATSAPP_VERIFY_TOKEN",
-  "WHATSAPP_ACCESS_TOKEN",
-  "WHATSAPP_PHONE_NUMBER_ID",
-  "WHATSAPP_WABA_ID",
   "DB_HOST",
   "DB_PORT",
   "DB_NAME",
@@ -21,11 +16,28 @@ const requiredEnvVars = [
   "WALLET_ENCRYPTION_KEY",
 ] as const;
 
+/** Optional integrations are only validated when at least one var is set. */
+const whatsappEnvVars = [
+  "WHATSAPP_APP_SECRET",
+  "WHATSAPP_VERIFY_TOKEN",
+  "WHATSAPP_ACCESS_TOKEN",
+  "WHATSAPP_PHONE_NUMBER_ID",
+  "WHATSAPP_WABA_ID",
+] as const;
+
 export function validateServerEnv() {
   const missing = requiredEnvVars.filter((key) => !process.env[key]);
   if (missing.length > 0) {
     throw new Error(
       `Missing required environment variables:\n${missing.map((k) => `  - ${k}`).join("\n")}`,
+    );
+  }
+
+  const whatsappSet = whatsappEnvVars.filter((key) => process.env[key]);
+  if (whatsappSet.length > 0 && whatsappSet.length < whatsappEnvVars.length) {
+    const incomplete = whatsappEnvVars.filter((key) => !process.env[key]);
+    throw new Error(
+      `WhatsApp integration partially configured — set all of:\n${incomplete.map((k) => `  - ${k}`).join("\n")}`,
     );
   }
 
