@@ -166,8 +166,10 @@ GitHub Actions workflows live under `.github/workflows/` and currently cover the
 | Backend | [`backend/docs/openapi.yaml`](backend/docs/openapi.yaml), `SLO_GUIDANCE.md`, `OBSERVABILITY.md`, `RUNBOOK.md`, `TROUBLESHOOTING.md` (all under `backend/docs/`) |
 | Smart contracts | [`smartcontract/ARCHITECTURE.md`](smartcontract/ARCHITECTURE.md), [`smartcontract/EVENTS.md`](smartcontract/EVENTS.md), [`smartcontract/SECURITY.md`](smartcontract/SECURITY.md), [`smartcontract/docs/`](smartcontract/docs/) (Blend/DEX integration, mainnet checklist, state machine) |
 
-Program submission: [`docs/LEVEL4_SUBMISSION.md`](docs/LEVEL4_SUBMISSION.md) (required
-links, proof of user wallet interactions, feedback summary, screenshots).
+Program submission: [`docs/LEVEL4_SUBMISSION.md`](docs/LEVEL4_SUBMISSION.md) (Level 4 —
+required links, proof of user wallet interactions, feedback summary, screenshots) and
+[`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md) (Level 5 — Blue Belt checklist,
+50-user milestone tracking, pitch deck, demo video, growth metrics).
 
 Issue tracking (frontend): [audit issues](/.github/audit-issues/) (engineering clean-up),
 [backlog](/.github/backlog/) (feature work), [issues index](/.github/ISSUES.md) (label guide).
@@ -207,24 +209,36 @@ issues for security reports:
 | Blend pool (`TestnetV2`) | `CCEBVDYM32YNYCVNRXQKDFFPISJJCV557CDZEIRBEE4NCV4KHPQ44HGF` |
 | Network | Stellar testnet (`https://soroban-testnet.stellar.org`) |
 
+> **Deployment status**: the frontend deploy workflow (`.github/workflows/deploy-production.yml`)
+> is live but currently requires the repo's `PROD_*` and `VERCEL_*` GitHub Actions secrets
+> to be configured before it can push to Vercel. See
+> [`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md) for the exact secret list.
+
 Get testnet USDC for this deployment from the Blend faucet at
 [testnet.blend.capital](https://testnet.blend.capital/) — connect a Friendbot-funded wallet
 and sign the claim to receive 1,000 USDC.
 
 ## User onboarding & feedback
 
-10 real users onboarded on Stellar testnet, each with a verified wallet interaction against
-the deployed vault contract (18 successful deposit/withdrawal transactions total — see
-[`docs/LEVEL4_SUBMISSION.md`](docs/LEVEL4_SUBMISSION.md) for the full transaction list and
-Horizon verification).
+10 real users onboarded on Stellar testnet at Level 4, each with a verified wallet
+interaction against the deployed vault contract (18 successful deposit/withdrawal
+transactions — see [`docs/LEVEL4_SUBMISSION.md`](docs/LEVEL4_SUBMISSION.md)). **Level 5
+target: 50+ testnet users** — see [`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md)
+for the live status of every submission requirement.
 
 - **Feedback form**: [Neurowealth User Survey](https://docs.google.com/forms/d/1CuVCJkxVhg72_XLZGV1sMq1qgmU6lwK4XifkUDAK0JE/edit) — collects Name, Email, Wallet Address, Network
   (Testnet/Mainnet), Product Rating, and: which feature they liked most, what feature is
   missing, any bugs/usability issues encountered, whether they'd recommend the product, and
   what improvements they'd like to see.
 - **Raw responses (public sheet)**: [Neurowealth User Survey — responses](https://docs.google.com/spreadsheets/d/1TjDw22Uc8FoKMTYjHIS5PbB0lfybo0_-PGAcJHOVHOs/edit?resourcekey=&gid=796105991#gid=796105991)
-  (CSV export confirmed publicly reachable with no auth). A blank starting template is also
-  at [`docs/level4-users-template.csv`](docs/level4-users-template.csv).
+  (CSV export confirmed publicly reachable with no auth).
+- **Exported responses (Excel/CSV)**: [`docs/level5-responses.csv`](docs/level5-responses.csv)
+  — exported from the live sheet for analysis and record-keeping. **Re-export this file
+  before final submission** once the 50-user milestone is reached so it matches the live sheet.
+- **Pitch deck**: [NeuroWealth — Blue Belt pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit?slide=id.p#slide=id.p)
+  (outline at [`docs/pitch-deck-outline.md`](docs/pitch-deck-outline.md)).
+- **Demo video**: [NeuroWealth — product walkthrough](https://www.loom.com/share/d0239815a130431db112515f0e8e18b4)
+  (Level 5 walkthrough being recorded — script at [`docs/demo-video-script.md`](docs/demo-video-script.md)).
 
 > Wallet-to-user pairing below is listed in the order users were reported to us, not
 > independently verified per-row — all 10 wallet addresses are independently confirmed real
@@ -252,17 +266,15 @@ scale config if you want clean analytics later.
 
 ### Improvement summary
 
-Two feedback themes came through clearly and repeatedly: **5 of 10 users asked for a
+Two feedback themes came through clearly and repeatedly: **6 of 10 users asked for a
 Google sign-in option** alongside wallet connect (U02, U03, U04, U07, U08, U10), and several
-felt the **UI needs more visual polish** (U05, U06, U08). Neither has a shipped fix yet —
-Google sign-in was explicitly descoped in favor of wallet-only, non-custodial auth earlier
-in this project, and general UI polish hasn't been scheduled — both are tracked as planned
-work below rather than claimed as done.
+felt the **UI needs more visual polish** (U05, U06, U08). **Both are now shipped** in the
+Level 5 cycle — alongside yield-visibility improvements that make it obvious whether funds
+have actually been deployed to a protocol — see the "Shipped this cycle" tables below.
 
-Feedback that *has* already driven real, shipped changes this cycle (all commits below are
-in this repo's history and predate the survey responses — several of the fixes are what
-let these same users complete clean, bug-free deposit/withdraw sessions by the time they
-responded):
+Feedback that has driven real, shipped changes this cycle (all commits below are in this
+repo's history; several of the Level 4 fixes are what let these same users complete clean,
+bug-free deposit/withdraw sessions by the time they responded):
 
 | User ID | Name | Email | Wallet Address | Feedback Summary | Improvement Made | Git Commit ID |
 |---|---|---|---|---|---|---|
@@ -274,8 +286,29 @@ responded):
 | U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | No way to see balance/yield history over time | Added a real per-user Earnings dashboard (balance, yield, APY, history chart) | [`bac47c7`](https://github.com/robertocarlous/NeuroWealth/commit/bac47c7) |
 | U04 | Dotun Oye | breevs21@gmail.com | `GCK7UHJYOW2Z3M6E2I5TNNWI2SLGJR6XVKYDRYCA4SY336Z2B4I53MGB` | Wallet sign-in was unstable, kept looping / rate-limited | Fixed the sign-in retry loop and a SEP-53 signature verification bug | [`074cbb3`](https://github.com/robertocarlous/NeuroWealth/commit/074cbb3), [`960b404`](https://github.com/robertocarlous/NeuroWealth/commit/960b404) |
 | U06, U03 | Ange Laura, Florence Funmilola | angelauraiteriteka@gmail.com, masuvicgloryschools@gmail.com | `GDUTTXPQS2WECYDBRVZWYGZAU52YH5677HMQBXKWRMHC3YBKVEPQI56V`, `GAZZZJVOT235FAJ6L2DCCRYA6VBAUJQRSXMAJ5NUI3OYAB5KNRVMHBLN` | Wanted clearer messaging on wallet/fund security | Already addressed by design, not a new commit: the vault is non-custodial — the connected wallet signs every transaction client-side and the backend never holds user keys (see Architecture notes below) | — |
-| — | U02, U03, U04, U07, U08, U10 (6 of 10) | — | — | Requested Google sign-in alongside wallet connect | Planned — descoped in favor of wallet-only, non-custodial auth for this phase | — |
-| — | U05, U06, U08 (3 of 10) | — | — | UI could be more polished | Planned — not yet scheduled | — |
+| — | U02, U03, U04, U07, U08, U10 (6 of 10) | — | — | Requested Google sign-in alongside wallet connect | **Shipped (Level 5)** — full Google sign-in: backend ID-token verification, `googleId` + nullable `walletAddress` on users, Prisma migration, Google button + auth context, route/unit tests | [`b7d9d71`](https://github.com/robertocarlous/NeuroWealth/commit/b7d9d71) |
+| — | U05, U06, U08 (3 of 10) | — | — | UI could be more polished | **Shipped (Level 5)** — design-token-driven UI polish across profile, settings, security, preferences, and the audit trail | [`b7d9d71`](https://github.com/robertocarlous/NeuroWealth/commit/b7d9d71), [`5eb005c`](https://github.com/robertocarlous/NeuroWealth/commit/5eb005c) |
+| — | U04, U09 + all | — | — | Hard to tell whether funds had actually been moved into a protocol | **Shipped (Level 5)** — yield-visibility card showing live USDC APYs and why the agent picked its protocol; agent status card now always shows "Active" once funds are held | [`b7d9d71`](https://github.com/robertocarlous/NeuroWealth/commit/b7d9d71), [`b008dbf`](https://github.com/robertocarlous/NeuroWealth/commit/b008dbf) |
+| — | All | — | — | Reliability / test-suite health | **Shipped (Level 5)** — repaired the backend Jest suite (ESM dependency loading, stale mocks, deterministic timing), 186 tests green | [`6fa7c7a`](https://github.com/robertocarlous/NeuroWealth/commit/6fa7c7a) |
+
+### Next-phase improvement plan (based on feedback + roadmap)
+
+Planned work for the next cycle, in priority order — each maps directly to collected feedback:
+
+1. **Let Google users link a wallet** — Google sign-in shipped with `walletAddress: null` for
+   Google-only accounts (vault/transactions already guide them to link a wallet). Next step:
+   a guided "link your Stellar wallet" flow so Google users can deposit/withdraw.
+2. **Deeper yield transparency** — surface realized vs. projected APY and per-protocol
+   historical earnings (feedback: "yield structure could be better", "yield optimization").
+3. **More protocols** — on-chain support beyond Blend (Templar, Stellar DEX liquidity) so the
+   agent has more opportunities to rotate into.
+4. **Onboarding polish** — connect a wallet as a first-run guided flow with clearer wallet
+   security messaging.
+5. **Risk profiles** — Conservative / Balanced / Growth strategies surfaced as a first-class
+   onboarding choice with backtested projections.
+
+Each item will be tracked as a commit against `main` (this plan itself is part of
+[`README.md`](https://github.com/robertocarlous/NeuroWealth/commit/6638186)).
 
 ## Roadmap
 
