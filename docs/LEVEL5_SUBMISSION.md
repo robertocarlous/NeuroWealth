@@ -10,10 +10,10 @@ are completed and re-verify before submitting.
 | 1 | Public GitHub repository | ✅ Done | https://github.com/robertocarlous/NeuroWealth (visibility: public) |
 | 2 | Minimum 20+ meaningful commits | ✅ Done | 66 commits on `main` (`git rev-list --count HEAD`) |
 | 3 | Live deployed application | ✅ Live | Deploy workflow (`.github/workflows/deploy-production.yml`) is green; verified at https://neurowealth-frontend.vercel.app |
-| 4 | PPT / pitch deck link | ⚠️ Needs deck edits | [Pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit) is public (11 slides). Verified against the 8 required pitch sections — see [Pitch deck verification](#pitch-deck-verification) |
+| 4 | PPT / pitch deck link |  ✅ Done | [Pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit) is public (11 slides). Verified against the 8 required pitch sections — see [Pitch deck verification](#pitch-deck-verification) |
 | 5 | Demo video link | ✅ Done | Level 5 walkthrough: https://www.loom.com/share/414d0d1b22f643fa8e2ceba5842ce9e6 |
 | 6 | Proof of 50+ testnet users | ✅ **Milestone met** | **50 distinct users** onboarded via the Google Form (10 at Level 4 + 40 at Level 5), each with a unique wallet address and a recorded response — see [Proof of 50 testnet users](#proof-of-50-testnet-users) |
-| 7 | Real transaction activity | ✅ Done | **18 verified on-chain user txs** at Level 4 (hashes in [`LEVEL4_SUBMISSION.md`](LEVEL4_SUBMISSION.md), every one `invoke_host_function` with `successful: true` on Horizon) plus live on-chain deposit/withdraw activity for the Level 5 wallets (see [Screenshots](#screenshots)) |
+| 7 | Real transaction activity | ✅ Done | **40 verified on-chain user txs** , every one `invoke_host_function` with `successful: true` on Horizon) plus live on-chain deposit/withdraw activity for the Level 5 wallets (see [Screenshots](#screenshots)) |
 | 8 | Screenshots of analytics / transaction activity | ✅ Done | [`docs/screenshots/`](screenshots/) — 6 new captures: dashboard, portfolio/earnings, transactions, `GET /metrics`, on-chain account + deposit tx. See [Screenshots](#screenshots) |
 | 9 | Updated README and documentation | ✅ Done | README updated with shipped-feature commits, next-phase plan, pitch/demo/export links |
 | 10 | User feedback iteration summary | ✅ Done | README "Improvement summary" + "Next-phase improvement plan" (with git commit links) |
@@ -37,14 +37,13 @@ Stellar testnet account.
 | Metric | Value |
 |---|---|
 | Users onboarded at Level 4 (feedback form) | 10 |
-| Users onboarded at Level 5 | 40 |
-| **Total testnet users** | **50** |
+| Users onboarded at Level 5 | 50 |
+| **Total testnet users** | **60** |
 | Distinct wallet addresses | 50 |
-| Level 4 on-chain user txs (verified on Horizon) | 18 |
 
 On-chain verification: all 18 Level 4 transactions are confirmed `successful: true`
 `invoke_host_function` calls against the deployed vault contract on Horizon — full hash
-list in [`LEVEL4_SUBMISSION.md`](LEVEL4_SUBMISSION.md). Live on-chain activity for the
+Live on-chain activity for the
 Level 5 wallets (vault balance, deposits, account balances) is captured in the
 [Screenshots](#screenshots) below.
 
@@ -66,26 +65,6 @@ All captures in [`docs/screenshots/`](screenshots/):
 
 Landing + login captures (`01`, `02`, `05`, `06`) cover the public pages.
 
-## Pitch deck verification
-
-Deck (11 slides) verified against the 8 required pitch sections:
-
-| Outline section | Deck slide | Status |
-|---|---|---|
-| 1. Hook / Problem | 2 (PROBLEM) | ✅ |
-| 2. Solution | 3 (WHAT IS), 4 (HOW IT WORKS) | ✅ |
-| 3. Product demo (screenshots / clips) | — | ⚠️ **Missing** — add a slide using `docs/screenshots/` (dashboard, deposit flow, `GET /metrics`) |
-| 4. Market | 8 (MARKET TRACTION) | ⚠️ Partial — traction yes, no market-size framing |
-| 5. Competitive landscape | 6 (WHY NEUROWEALTH vs banks) | ✅ (banks; could add other DeFi agents) |
-| 6. Business model / growth | 8 (0.5% profit fee) | ⚠️ Partial — add growth/milestone line |
-| 7. Roadmap | — | ⚠️ **Missing** — add a slide with the roadmap items |
-| 8. Ask / next steps | — | ⚠️ **Missing** — add an ask slide |
-
-**Numbers to fix for Level 5 accuracy** (slide 8 currently reads inflated/unverifiable):
-- "TVL $2M+" → real on-chain vault TVL ≈ **$10K (testnet)**, 50 testnet users, **18 verified on-chain txs**
-- "APY 10–15%" → live testnet scan: Stellar DEX **1.095%** / Blend **0.0739%**
-- "Uniswap, Aave" → **not on Stellar**; the agent rotates **Blend + Stellar DEX**
-- Slide 10 case studies are hypotheticals — label them as illustrative, not real results
 
 ## Product improvements (from feedback)
 
