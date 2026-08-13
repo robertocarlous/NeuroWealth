@@ -8,7 +8,7 @@ are completed and re-verify before submitting.
 | # | Requirement | Status | Where it lives / what's needed |
 |---|---|---|---|
 | 1 | Public GitHub repository | ✅ Done | https://github.com/robertocarlous/NeuroWealth (visibility: public) |
-| 2 | Minimum 20+ meaningful commits | ✅ Done | 65 commits on `main` (`git rev-list --count HEAD`) |
+| 2 | Minimum 20+ meaningful commits | ✅ Done | 66 commits on `main` (`git rev-list --count HEAD`) |
 | 3 | Live deployed application | ✅ Live | Deploy workflow (`.github/workflows/deploy-production.yml`) is green; verified at https://neurowealth-frontend.vercel.app |
 | 4 | PPT / pitch deck link | ⚠️ Needs deck edits | [Pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit) is public (11 slides). Verified against the 8 required pitch sections — see [Pitch deck verification](#pitch-deck-verification) |
 | 5 | Demo video link | ⚠️ To record | Level 4 walkthrough: https://www.loom.com/share/d0239815a130431db112515f0e8e18b4 — record the Level 5 walkthrough using [`demo-video-script.md`](demo-video-script.md) and replace the link |
