@@ -59,7 +59,7 @@ All captures in [`docs/screenshots/`](screenshots/):
 | [`07-dashboard-desktop.png`](screenshots/07-dashboard-desktop.png) | Live dashboard: real on-chain vault balance **$450.00** (testnet user wallet `GAZEBK…M2JB`), **AI agent status Active**, and live scanned USDC yield analytics (Stellar DEX **1.095% APY** / $24K TVL, Blend **0.0739% APY** / $139.4K TVL) |
 | [`08-portfolio-desktop.png`](screenshots/08-portfolio-desktop.png) | Portfolio / Earnings page (balance, yield earned, APY over time, positions) |
 | [`09-transactions-desktop.png`](screenshots/09-transactions-desktop.png) | Deposit/Withdraw flow with the connected Freighter wallet (`GAZEBK…M2JB`) and real wallet balance (**$550.00** = 1000 − 450 deposited) |
-| [`10-metrics-desktop.png`](screenshots/10-metrics-desktop.png) | Live **`GET /metrics`** Prometheus output (event counters, agent heartbeat, HTTP request metrics) — real endpoint (`backend/src/routes/metrics.ts` + `internalAuthGuardStrict`), rendered locally because the production Railway env intentionally has no `INTERNAL_SERVICE_TOKEN` set, so `/metrics` is 404-by-design on prod |
+
 | [`11-onchain-activity-desktop.png`](screenshots/11-onchain-activity-desktop.png) | StellarExpert testnet account page for testnet user wallet `GAZEBK…M2JB` — real balances (**550 USDC**, 9,999.99 XLM, 5,000 BLND) and 3 payments created 2026-08-12 |
 | [`12-onchain-deposit-tx-desktop.png`](screenshots/12-onchain-deposit-tx-desktop.png) | StellarExpert testnet **transaction** page: `deposit(GAZE…M2JB, 5000000000i128)` on vault contract `CC2A…A42O`, **Status: Successful**, real fee + signature — a verified on-chain deposit tx |
 
