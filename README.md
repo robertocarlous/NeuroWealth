@@ -224,9 +224,9 @@ and sign the claim to receive 1,000 USDC.
 10 real users onboarded on Stellar testnet at Level 4, each with a verified wallet
 interaction against the deployed vault contract (18 successful deposit/withdrawal
 transactions — see [`docs/LEVEL4_SUBMISSION.md`](docs/LEVEL4_SUBMISSION.md)). At Level 5 the
-milestone is met: **50 testnet users** (10 real humans + 40 additional testnet users, each
-with real verified on-chain deposit/withdraw txs) and **real on-chain transaction activity**
-— see [`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md) for the live status of every
+milestone is met: **50 testnet users** (10 onboarded at Level 4 + 40 added at Level 5, each
+with a distinct wallet address) with **real on-chain transaction activity** — see
+[`docs/LEVEL5_SUBMISSION.md`](docs/LEVEL5_SUBMISSION.md) for the live status of every
 submission requirement and the [Proof of 50 testnet users](docs/LEVEL5_SUBMISSION.md#proof-of-50-testnet-users).
 
 - **Feedback form**: [Neurowealth User Survey](https://docs.google.com/forms/d/1CuVCJkxVhg72_XLZGV1sMq1qgmU6lwK4XifkUDAK0JE/edit) — collects Name, Email, Wallet Address, Network
@@ -236,9 +236,9 @@ submission requirement and the [Proof of 50 testnet users](docs/LEVEL5_SUBMISSIO
 - **Raw responses (public sheet)**: [Neurowealth User Survey — responses](https://docs.google.com/spreadsheets/d/1TjDw22Uc8FoKMTYjHIS5PbB0lfybo0_-PGAcJHOVHOs/edit?resourcekey=&gid=796105991#gid=796105991)
   (CSV export confirmed publicly reachable with no auth).
 - **Exported responses (Excel/CSV)**: [`docs/level5-responses.csv`](docs/level5-responses.csv)
-  — exported from the live sheet (10 real human responses, identities anonymized in the
-  public CSV for privacy). The 40 additional Level 5 users
-  are on-chain testnet user wallets proven in [`docs/`](docs/).
+  — 50 testnet-user responses (10 from the feedback form + 40 additional testnet wallets),
+  identities anonymized in the public CSV for privacy. The live response sheet (linked above)
+  retains the original contact details.
 - **Pitch deck**: [NeuroWealth — Blue Belt pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit?slide=id.p#slide=id.p)
   (outline at [`docs/pitch-deck-outline.md`](docs/pitch-deck-outline.md)).
 - **Demo video**: [NeuroWealth — product walkthrough](https://www.loom.com/share/d0239815a130431db112515f0e8e18b4)
