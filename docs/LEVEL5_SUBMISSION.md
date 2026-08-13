@@ -11,7 +11,7 @@ are completed and re-verify before submitting.
 | 2 | Minimum 20+ meaningful commits | ✅ Done | 66 commits on `main` (`git rev-list --count HEAD`) |
 | 3 | Live deployed application | ✅ Live | Deploy workflow (`.github/workflows/deploy-production.yml`) is green; verified at https://neurowealth-frontend.vercel.app |
 | 4 | PPT / pitch deck link | ⚠️ Needs deck edits | [Pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit) is public (11 slides). Verified against the 8 required pitch sections — see [Pitch deck verification](#pitch-deck-verification) |
-| 5 | Demo video link | ⚠️ To record | Level 4 walkthrough: https://www.loom.com/share/d0239815a130431db112515f0e8e18b4 — record the Level 5 walkthrough using [`demo-video-script.md`](demo-video-script.md) and replace the link |
+| 5 | Demo video link | ✅ Done | Level 5 walkthrough: https://www.loom.com/share/414d0d1b22f643fa8e2ceba5842ce9e6 |
 | 6 | Proof of 50+ testnet users | ✅ **Milestone met** | **50 distinct users** onboarded via the Google Form (10 at Level 4 + 40 at Level 5), each with a unique wallet address and a recorded response — see [Proof of 50 testnet users](#proof-of-50-testnet-users) |
 | 7 | Real transaction activity | ✅ Done | **18 verified on-chain user txs** at Level 4 (hashes in [`LEVEL4_SUBMISSION.md`](LEVEL4_SUBMISSION.md), every one `invoke_host_function` with `successful: true` on Horizon) plus live on-chain deposit/withdraw activity for the Level 5 wallets (see [Screenshots](#screenshots)) |
 | 8 | Screenshots of analytics / transaction activity | ✅ Done | [`docs/screenshots/`](screenshots/) — 6 new captures: dashboard, portfolio/earnings, transactions, `GET /metrics`, on-chain account + deposit tx. See [Screenshots](#screenshots) |
@@ -125,7 +125,7 @@ Verify with: `gh secret list`
 | Backend API | https://neurowealth-web-production.up.railway.app (deployed 2026-08-12 with the latest code, incl. `/api/auth/google`) |
 | Vault contract (testnet) | [`CC2A56NEH35Z2VJ5TALSULYUICPCJXU3KLBHOTMU3OSRSOCCDJN5A42O`](https://stellar.expert/explorer/testnet/contract/CC2A56NEH35Z2VJ5TALSULYUICPCJXU3KLBHOTMU3OSRSOCCDJN5A42O) |
 | Pitch deck | https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit |
-| Demo video | https://www.loom.com/share/d0239815a130431db112515f0e8e18b4 (Level 4 — replace with Level 5 walkthrough) |
+| Demo video | https://www.loom.com/share/414d0d1b22f643fa8e2ceba5842ce9e6 |
 | Feedback form | https://docs.google.com/forms/d/1CuVCJkxVhg72_XLZGV1sMq1qgmU6lwK4XifkUDAK0JE/edit |
 | Responses (public sheet) | https://docs.google.com/spreadsheets/d/1TjDw22Uc8FoKMTYjHIS5PbB0lfybo0_-PGAcJHOVHOs/edit |
 | Responses export (Excel/CSV) | [`level5-responses.csv`](level5-responses.csv) |

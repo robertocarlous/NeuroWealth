@@ -241,8 +241,8 @@ submission requirement and the [Proof of 50 testnet users](docs/LEVEL5_SUBMISSIO
   retains the original contact details.
 - **Pitch deck**: [NeuroWealth — Blue Belt pitch deck](https://docs.google.com/presentation/d/1ySdYMYBaBYLbkfV6_cg2oQUag4v9XZyS-jcuj-5rLPQ/edit?slide=id.p#slide=id.p)
   (outline at [`docs/pitch-deck-outline.md`](docs/pitch-deck-outline.md)).
-- **Demo video**: [NeuroWealth — product walkthrough](https://www.loom.com/share/d0239815a130431db112515f0e8e18b4)
-  (Level 5 walkthrough being recorded — script at [`docs/demo-video-script.md`](docs/demo-video-script.md)).
+- **Demo video**: [NeuroWealth — product walkthrough](https://www.loom.com/share/414d0d1b22f643fa8e2ceba5842ce9e6)
+  (Level 5 walkthrough).
 
 > Wallet-to-user pairing below is listed in the order users were reported to us, not
 > independently verified per-row — all 10 wallet addresses are independently confirmed real
